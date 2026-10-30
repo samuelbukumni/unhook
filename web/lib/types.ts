@@ -5,6 +5,8 @@ export type BillingPeriod = "monthly" | "yearly" | "weekly";
 
 export type SubscriptionStatus = "trial" | "active" | "cancelled";
 
+export type ReminderChannel = "push" | "email";
+
 export type Subscription = {
   id: string;
   service: string;
@@ -19,4 +21,5 @@ export type Subscription = {
   cancel_url: string;
   notes: string;
   confidence: number; // 0 to 1, how sure we are the details are right
+  reminder_channel: ReminderChannel;
 };

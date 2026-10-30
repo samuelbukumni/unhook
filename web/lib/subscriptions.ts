@@ -1,8 +1,8 @@
 // Pure helpers for working with subscriptions: sorting, cost totals,
 // and the "trial ending soon" check. No Next.js code here.
 
-import { daysBetween } from "./dates";
-import type { BillingPeriod, Subscription } from "./types";
+import { addDays, addMonths, daysBetween } from "./dates";
+import type { BillingPeriod, Subscription, SubscriptionStatus } from "./types";
 
 export const TRIAL_ENDING_SOON_DAYS = 3;
 
@@ -59,4 +59,43 @@ export function formatMoney(amount: number, currency: string): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
     amount,
   );
+}
+
+/**
+ * The next charge on or after `today`, counted forward from the first charge
+ * in steps of the billing period. A first charge in the future is the answer.
+ */
+export function nextRenewalDate(
+  firstChargeDate: string,
+  period: BillingPeriod,
+  today: string,
+): string {
+  if (firstChargeDate >= today) return firstChargeDate;
+  if (period === "weekly") {
+    const weeks = Math.ceil(daysBetween(firstChargeDate, today) / 7);
+    return addDays(firstChargeDate, weeks * 7);
+  }
+  const step = period === "yearly" ? 12 : 1;
+  let count = 1;
+  while (addMonths(firstChargeDate, count * step) < today) count++;
+  return addMonths(firstChargeDate, count * step);
+}
+
+/** Cancelled stays cancelled; otherwise it's a trial until the trial ends. */
+export function statusFor(
+  current: SubscriptionStatus,
+  trialEndDate: string | null,
+  today: string,
+): SubscriptionStatus {
+  if (current === "cancelled") return "cancelled";
+  return trialEndDate && trialEndDate >= today ? "trial" : "active";
+}
+
+/** Recomputes next_renewal_date and status after dates or period change. */
+export function withComputedFields(sub: Subscription, today: string): Subscription {
+  return {
+    ...sub,
+    next_renewal_date: nextRenewalDate(sub.first_charge_date, sub.billing_period, today),
+    status: statusFor(sub.status, sub.trial_end_date, today),
+  };
 }

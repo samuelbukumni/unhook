@@ -1,10 +1,12 @@
-// Placeholder detail page at /subscriptions/[id]. Shows the service name and
-// a "details coming soon" note. Unknown ids get the 404 page via notFound().
+// Detail and edit page at /subscriptions/[id]. The back link is static; the
+// subscription loads inside Suspense because params and today's date are
+// request-time values. Unknown ids get the 404 page via notFound().
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { getSubscription } from "@/lib/data";
+import { SubscriptionDetail } from "@/components/SubscriptionDetail";
+import { getSubscription, getToday } from "@/lib/data";
 import { MOCK_SUBSCRIPTION_IDS } from "@/lib/mock-data";
 
 // Prerender a page for every known id at build time.
@@ -18,25 +20,17 @@ export default function SubscriptionPage({ params }: PageProps<"/subscriptions/[
       <Link href="/" className="text-sm text-zinc-500 hover:underline">
         ← Back to subscriptions
       </Link>
-      {/* params and the mock data are request-time values, so they load inside Suspense. */}
-      <Suspense fallback={<h1 className="text-3xl font-semibold text-zinc-400">Loading…</h1>}>
-        <SubscriptionHeading params={params} />
+      <Suspense fallback={<p className="text-zinc-500">Loading…</p>}>
+        <SubscriptionContent params={params} />
       </Suspense>
-      <p className="rounded-xl border border-dashed border-zinc-300 p-4 text-zinc-500 dark:border-zinc-700">
-        Details, reminders, and cancel steps are coming soon.
-      </p>
     </main>
   );
 }
 
-async function SubscriptionHeading({ params }: Pick<PageProps<"/subscriptions/[id]">, "params">) {
+async function SubscriptionContent({ params }: Pick<PageProps<"/subscriptions/[id]">, "params">) {
   const { id } = await params;
-  const sub = await getSubscription(id);
+  const [sub, today] = await Promise.all([getSubscription(id), getToday()]);
   if (!sub) notFound();
 
-  return (
-    <h1 className="text-3xl font-semibold tracking-tight">
-      {sub.service} <span className="text-zinc-500">{sub.plan}</span>
-    </h1>
-  );
+  return <SubscriptionDetail initial={sub} today={today} />;
 }

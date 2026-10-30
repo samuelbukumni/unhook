@@ -23,6 +23,20 @@ export function addDays(isoDate: string, days: number): string {
     .slice(0, 10);
 }
 
+/**
+ * Adds whole months to a "YYYY-MM-DD" date. If the day doesn't exist in the
+ * target month (Jan 31 + 1 month), it uses that month's last day (Feb 28/29).
+ */
+export function addMonths(isoDate: string, months: number): string {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  const firstOfTarget = new Date(Date.UTC(y, m - 1 + months, 1));
+  const lastDay = new Date(
+    Date.UTC(firstOfTarget.getUTCFullYear(), firstOfTarget.getUTCMonth() + 1, 0),
+  ).getUTCDate();
+  firstOfTarget.setUTCDate(Math.min(d, lastDay));
+  return firstOfTarget.toISOString().slice(0, 10);
+}
+
 /** Whole days from `fromDate` to `toDate` (negative if `toDate` is earlier). */
 export function daysBetween(fromDate: string, toDate: string): number {
   return Math.round((toUTCms(toDate) - toUTCms(fromDate)) / MS_PER_DAY);

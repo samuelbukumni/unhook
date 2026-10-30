@@ -1,8 +1,10 @@
 // Fake subscriptions for building the UI before real data exists.
 // Dates are stored as day offsets from "today" so the list always looks
 // realistic (and at least one trial is always about to end).
+// next_renewal_date and status are computed from the first charge date.
 
 import { addDays } from "./dates";
+import { withComputedFields } from "./subscriptions";
 import type { Subscription } from "./types";
 
 type MockSeed = Omit<
@@ -11,7 +13,6 @@ type MockSeed = Omit<
 > & {
   trialEndsInDays: number | null; // null = not a trial
   firstChargeInDays: number; // negative = already charged in the past
-  renewsInDays: number;
 };
 
 const seeds: MockSeed[] = [
@@ -25,9 +26,9 @@ const seeds: MockSeed[] = [
     status: "trial",
     trialEndsInDays: 2,
     firstChargeInDays: 2,
-    renewsInDays: 2,
     cancel_url: "https://designly.example/account/billing",
     notes: "7-day free trial from a receipt email.",
+    reminder_channel: "push",
     confidence: 0.92,
   },
   {
@@ -40,9 +41,9 @@ const seeds: MockSeed[] = [
     status: "active",
     trialEndsInDays: null,
     firstChargeInDays: -200,
-    renewsInDays: 5,
     cancel_url: "https://streamflix.example/cancel",
     notes: "",
+    reminder_channel: "email",
     confidence: 0.98,
   },
   {
@@ -55,9 +56,9 @@ const seeds: MockSeed[] = [
     status: "trial",
     trialEndsInDays: 1,
     firstChargeInDays: 1,
-    renewsInDays: 1,
     cancel_url: "https://fitpulse.example/settings/subscription",
     notes: "Trial started from the mobile app.",
+    reminder_channel: "push",
     confidence: 0.81,
   },
   {
@@ -70,9 +71,9 @@ const seeds: MockSeed[] = [
     status: "active",
     trialEndsInDays: null,
     firstChargeInDays: -320,
-    renewsInDays: 45,
     cancel_url: "https://cloudvault.example/plans",
     notes: "Family sharing on.",
+    reminder_channel: "email",
     confidence: 0.95,
   },
   {
@@ -85,9 +86,9 @@ const seeds: MockSeed[] = [
     status: "active",
     trialEndsInDays: null,
     firstChargeInDays: -60,
-    renewsInDays: 3,
     cancel_url: "https://newsdaily.example/account",
     notes: "Intro price may go up after 3 months.",
+    reminder_channel: "push",
     confidence: 0.74,
   },
   {
@@ -100,9 +101,9 @@ const seeds: MockSeed[] = [
     status: "trial",
     trialEndsInDays: 10,
     firstChargeInDays: 10,
-    renewsInDays: 10,
     cancel_url: "https://codecamp.example/billing/cancel",
     notes: "",
+    reminder_channel: "push",
     confidence: 0.88,
   },
   {
@@ -115,9 +116,9 @@ const seeds: MockSeed[] = [
     status: "active",
     trialEndsInDays: null,
     firstChargeInDays: -400,
-    renewsInDays: 18,
     cancel_url: "https://tunebox.example/account/plan",
     notes: "",
+    reminder_channel: "push",
     confidence: 0.97,
   },
   {
@@ -130,9 +131,9 @@ const seeds: MockSeed[] = [
     status: "cancelled",
     trialEndsInDays: null,
     firstChargeInDays: -340,
-    renewsInDays: 25,
     cancel_url: "https://photoforge.example/cancel",
     notes: "Cancelled; access ends on the renewal date.",
+    reminder_channel: "push",
     confidence: 0.9,
   },
 ];
@@ -142,13 +143,16 @@ export const MOCK_SUBSCRIPTION_IDS = seeds.map((seed) => seed.id);
 
 /** Builds the 8 mock subscriptions with dates relative to `today` ("YYYY-MM-DD"). */
 export function buildMockSubscriptions(today: string): Subscription[] {
-  return seeds.map(
-    ({ trialEndsInDays, firstChargeInDays, renewsInDays, ...rest }) => ({
-      ...rest,
-      trial_end_date:
-        trialEndsInDays === null ? null : addDays(today, trialEndsInDays),
-      first_charge_date: addDays(today, firstChargeInDays),
-      next_renewal_date: addDays(today, renewsInDays),
-    }),
+  return seeds.map(({ trialEndsInDays, firstChargeInDays, ...rest }) =>
+    withComputedFields(
+      {
+        ...rest,
+        trial_end_date:
+          trialEndsInDays === null ? null : addDays(today, trialEndsInDays),
+        first_charge_date: addDays(today, firstChargeInDays),
+        next_renewal_date: "", // filled in by withComputedFields
+      },
+      today,
+    ),
   );
 }
