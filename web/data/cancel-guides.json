@@ -1,0 +1,365 @@
+[
+  {
+    "name": "Netflix",
+    "aliases": [],
+    "cancel_url": "https://help.netflix.com/en/node/407",
+    "steps": [
+      "Sign in to Netflix in a browser and open your account's Manage membership page.",
+      "Select Cancel.",
+      "Select Finish Cancellation to confirm.",
+      "Check for the confirmation email. If another company bills you for Netflix, cancel with them instead."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Spotify",
+    "aliases": [
+      "Spotify Premium"
+    ],
+    "cancel_url": "https://support.spotify.com/us/article/cancel-premium/",
+    "steps": [
+      "Sign in to your Spotify account page in a browser.",
+      "Go to Manage your plan.",
+      "Select Cancel subscription and confirm.",
+      "Premium stays until your next billing date, then the account switches to free."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Canva",
+    "aliases": [
+      "Canva Pro"
+    ],
+    "cancel_url": "https://www.canva.com/help/cancel-canva-plan/",
+    "steps": [
+      "Sign in to the Canva account or team that pays for the plan.",
+      "Open your account menu, then Settings, then Billing.",
+      "On your plan, select Cancel plan and follow the prompts to confirm.",
+      "If you subscribed through Apple, Google Play, or PayPal, cancel there instead."
+    ],
+    "verified": false
+  },
+  {
+    "name": "ChatGPT",
+    "aliases": [
+      "ChatGPT Plus",
+      "ChatGPT Pro",
+      "OpenAI"
+    ],
+    "cancel_url": "https://help.openai.com/en/articles/7232927-canceling-your-chatgpt-subscription",
+    "steps": [
+      "Sign in to ChatGPT on the web.",
+      "Open your account menu and select Settings, then Billing.",
+      "Under Cancel plan, select Cancel.",
+      "If you subscribed in the iOS or Android app, cancel through the App Store or Google Play instead. Cancel at least 24 hours before renewal."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Notion",
+    "aliases": [
+      "Notion Plus",
+      "Notion Business"
+    ],
+    "cancel_url": "https://www.notion.com/help/plan-downgrade",
+    "steps": [
+      "In Notion's sidebar, open Settings, then Billing, then Change plan.",
+      "Select the Free plan (or a cheaper plan) and click Continue.",
+      "Give feedback if asked, then click Downgrade.",
+      "Check the confirmation for the date your current plan ends."
+    ],
+    "verified": false
+  },
+  {
+    "name": "YouTube Premium",
+    "aliases": [
+      "YouTube Music Premium",
+      "YouTube Music"
+    ],
+    "cancel_url": "https://support.google.com/youtube/answer/6308278",
+    "steps": [
+      "Sign in to YouTube with the account that pays for Premium.",
+      "Open your paid memberships page.",
+      "Choose your membership and select the option to cancel (you may be offered a pause instead).",
+      "Confirm the cancellation."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Disney+",
+    "aliases": [
+      "Disney Plus"
+    ],
+    "cancel_url": "https://help.disneyplus.com/article/disneyplus-cancel",
+    "steps": [
+      "Sign in to Disney+ in a web browser.",
+      "Open your profile, then Account.",
+      "Select your Disney+ subscription and choose Cancel Subscription.",
+      "If you're billed by Apple, Google, Amazon, or another provider, cancel through them instead."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Amazon Prime",
+    "aliases": [
+      "Prime"
+    ],
+    "cancel_url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=GTJQ7QZY7QL2HK4Y",
+    "steps": [
+      "Sign in to your Amazon account.",
+      "Go to your Prime membership management page.",
+      "Select the option to end your membership and benefits.",
+      "Follow the prompts to confirm."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Apple",
+    "aliases": [
+      "Apple Music",
+      "Apple TV+",
+      "Apple One",
+      "iCloud+",
+      "App Store"
+    ],
+    "cancel_url": "https://support.apple.com/en-us/118428",
+    "steps": [
+      "On iPhone or iPad, open Settings and tap your name, then Subscriptions (or use the web option on Apple's support page).",
+      "Tap the subscription you want to stop.",
+      "Tap Cancel Subscription and confirm.",
+      "If you don't see Cancel, the subscription is already cancelled or billed by someone else."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Hulu",
+    "aliases": [],
+    "cancel_url": "https://help.hulu.com/article/hulu-cancel-hulu-subscription",
+    "steps": [
+      "Sign in to your Hulu Account page in a web browser.",
+      "Under Your Subscription, select Cancel.",
+      "Continue through the prompts and select Cancel Subscription.",
+      "If you're billed by a third party, check Payment Information on the Account page and cancel with that company."
+    ],
+    "verified": false
+  },
+  {
+    "name": "HBO Max",
+    "aliases": [
+      "Max"
+    ],
+    "cancel_url": "https://help.hbomax.com/us/Answer/Detail/000002526",
+    "steps": [
+      "Go to HBOMax.com/subscription and sign in to see who bills you.",
+      "If HBO Max bills you, choose Cancel Your Subscription.",
+      "Confirm and note the date your access ends.",
+      "If Apple, Google, Amazon, Roku, or a TV provider bills you, cancel through them."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Adobe Creative Cloud",
+    "aliases": [
+      "Adobe",
+      "Creative Cloud",
+      "Adobe Acrobat",
+      "Photoshop"
+    ],
+    "cancel_url": "https://helpx.adobe.com/account/individual/subscriptions-and-plans/renewals-and-cancellations/cancel-adobe-subscription.html",
+    "steps": [
+      "Sign in to your Adobe account and open Plans and payment.",
+      "Select Manage plan for the plan you want to cancel, then Cancel your plan.",
+      "Choose a reason, review the details, and select Confirm cancellation.",
+      "Check the terms first: some annual plans charge an early-termination fee."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Microsoft 365",
+    "aliases": [
+      "Office 365"
+    ],
+    "cancel_url": "https://support.microsoft.com/en-us/accounts-billing/subscriptions/cancel-a-microsoft-365-subscription",
+    "steps": [
+      "Sign in at account.microsoft.com with the account that bought Microsoft 365.",
+      "Open Services & subscriptions and find Microsoft 365.",
+      "Select Cancel subscription (it may say Upgrade or Cancel).",
+      "Follow the prompts and select I don't want my subscription. If you bought it from Apple, Google, or a retailer, cancel with them."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Dropbox",
+    "aliases": [
+      "Dropbox Plus",
+      "Dropbox Professional"
+    ],
+    "cancel_url": "https://help.dropbox.com/plans/downgrade-dropbox-individual-plans",
+    "steps": [
+      "Sign in to dropbox.com in a browser.",
+      "Open your account settings and go to the plan or billing section.",
+      "Choose the option to cancel or change your plan and confirm.",
+      "If you subscribed through the iOS or Android app, cancel through that app store."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Google One",
+    "aliases": [],
+    "cancel_url": "https://support.google.com/googleone/answer/9056360",
+    "steps": [
+      "Go to Google One and sign in.",
+      "Open Settings.",
+      "Select Cancel membership, then confirm.",
+      "Paid storage stays until the end of the current billing cycle."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Duolingo",
+    "aliases": [
+      "Super Duolingo",
+      "Duolingo Max"
+    ],
+    "cancel_url": "https://www.duolingo.com/help/cancel-my-super-duolingo-subscription",
+    "steps": [
+      "Cancel in the same place you subscribed (web, App Store, or Google Play).",
+      "On the web: sign in, open Settings, select Super Duolingo, then Cancel subscription.",
+      "In the app: open the subscription settings and manage the subscription through your app store.",
+      "Deleting the app or your account does not cancel the subscription."
+    ],
+    "verified": false
+  },
+  {
+    "name": "LinkedIn Premium",
+    "aliases": [
+      "LinkedIn"
+    ],
+    "cancel_url": "https://www.linkedin.com/help/linkedin/answer/a545578",
+    "steps": [
+      "Sign in to LinkedIn on desktop and open your profile menu.",
+      "Go to Premium features, then Manage subscription.",
+      "Select Cancel subscription and confirm.",
+      "Cancel at least one day before your next billing date."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Audible",
+    "aliases": [
+      "Audible Premium Plus",
+      "Audible Plus"
+    ],
+    "cancel_url": "https://help.audible.com/s/article/cancel-membership?language=en_US",
+    "steps": [
+      "Sign in to the Audible website (deleting the app does not cancel).",
+      "Go to Membership details in your account.",
+      "Choose the option to cancel your membership and follow the prompts.",
+      "Use any remaining credits first; they may expire when the membership ends."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Grammarly",
+    "aliases": [
+      "Grammarly Pro",
+      "Grammarly Premium"
+    ],
+    "cancel_url": "https://support.grammarly.com/hc/en-us/articles/115000090172-How-do-I-cancel-my-subscription",
+    "steps": [
+      "Sign in to your Grammarly account in a browser.",
+      "Open your account's Subscription page.",
+      "Select Cancel Subscription, choose a reason, and confirm.",
+      "If you bought it through the App Store, cancel through Apple instead."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Xbox Game Pass",
+    "aliases": [
+      "Xbox",
+      "Game Pass",
+      "PC Game Pass"
+    ],
+    "cancel_url": "https://support.xbox.com/en-US/help/subscriptions-billing/manage-subscriptions/cancel-recurring-billing-or-subscription",
+    "steps": [
+      "Sign in to your Microsoft account's Services & subscriptions page.",
+      "Find the Xbox subscription and select Manage.",
+      "Turn off recurring billing (or choose Cancel) and confirm.",
+      "Benefits continue until the current period ends."
+    ],
+    "verified": false
+  },
+  {
+    "name": "PlayStation Plus",
+    "aliases": [
+      "PS Plus"
+    ],
+    "cancel_url": "https://www.playstation.com/en-us/support/subscriptions/cancel-playstation-plus/",
+    "steps": [
+      "Sign in to PlayStation Account Management in a browser.",
+      "Select Subscription from the menu.",
+      "Select Cancel Subscription next to PlayStation Plus.",
+      "On a PS5, you can also go to Settings > Users and Accounts > Account > Payment and Subscriptions > Subscriptions."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Paramount+",
+    "aliases": [
+      "Paramount Plus"
+    ],
+    "cancel_url": "https://support.paramountplus.com/s/article/PI-How-do-I-cancel-my-subscription?language=en_US",
+    "steps": [
+      "Sign in at paramountplus.com.",
+      "Open your account page.",
+      "Find Cancel subscription and confirm.",
+      "If you signed up through Apple, Roku, Amazon, or Google Play, cancel through that platform."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Peacock",
+    "aliases": [
+      "Peacock Premium"
+    ],
+    "cancel_url": "https://www.peacocktv.com/help/article/cancellation",
+    "steps": [
+      "Sign in at peacocktv.com.",
+      "Open your account and go to plans or subscriptions.",
+      "Choose the option to cancel and confirm.",
+      "If you subscribed through Apple, Google, Roku, Amazon, or another provider, cancel through them."
+    ],
+    "verified": false
+  },
+  {
+    "name": "GitHub Copilot",
+    "aliases": [
+      "Copilot"
+    ],
+    "cancel_url": "https://docs.github.com/en/copilot/how-tos/manage-your-account/view-and-change-your-copilot-plan",
+    "steps": [
+      "Sign in to GitHub and open Settings.",
+      "Go to Billing & licensing, then Licensing.",
+      "Find Copilot, choose Manage subscription, then Cancel subscription.",
+      "If your organization provides Copilot, ask an organization owner instead."
+    ],
+    "verified": false
+  },
+  {
+    "name": "Claude",
+    "aliases": [
+      "Claude Pro",
+      "Claude Max",
+      "Anthropic"
+    ],
+    "cancel_url": "https://support.claude.com/en/articles/8325617-cancel-your-pro-or-max-subscription",
+    "steps": [
+      "Sign in at claude.ai.",
+      "Open Settings, then Billing.",
+      "Select Cancel and confirm.",
+      "If you subscribed in the iOS or Android app, cancel through that app store. Cancel at least 24 hours before renewal."
+    ],
+    "verified": false
+  }
+]

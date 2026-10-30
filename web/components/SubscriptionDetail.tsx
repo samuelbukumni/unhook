@@ -43,6 +43,9 @@ export function SubscriptionDetail({ id }: { id: string }) {
           {sub.status === "cancelled" ? "access ends" : "next charge"}{" "}
           {formatDate(sub.next_renewal_date)}
         </p>
+        <Link href={`/subscriptions/${sub.id}/cancel`} className="mt-2 inline-block text-sm underline">
+          How to cancel {sub.service} →
+        </Link>
       </header>
       <SubscriptionEditor subscription={sub} today={today} onSave={saveSubscription} />
     </div>

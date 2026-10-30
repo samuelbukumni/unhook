@@ -1,6 +1,7 @@
 // Pure helpers for working with subscriptions: sorting, cost totals,
 // and the "trial ending soon" check. No Next.js code here.
 
+import { findCancelGuide } from "./cancel-guides";
 import { addDays, addMonths, daysBetween } from "./dates";
 import type {
   BillingPeriod,
@@ -120,7 +121,8 @@ export type NewSubscriptionInput = {
 
 /**
  * Builds a full Subscription from form input: a new id, plus computed
- * next_renewal_date and status. cancel_url starts as null (unknown).
+ * next_renewal_date and status. cancel_url comes from the cancel guides,
+ * or null when there's no guide with a confirmed link.
  */
 export function createSubscription(
   input: NewSubscriptionInput,
@@ -134,7 +136,7 @@ export function createSubscription(
       id: `${slug || "sub"}-${crypto.randomUUID().slice(0, 8)}`,
       status: "active",
       next_renewal_date: "",
-      cancel_url: null,
+      cancel_url: findCancelGuide(input.service)?.cancel_url ?? null,
       confidence,
     },
     today,
