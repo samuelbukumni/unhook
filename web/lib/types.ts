@@ -18,8 +18,8 @@ export type Subscription = {
   first_charge_date: string;
   next_renewal_date: string;
   status: SubscriptionStatus;
-  cancel_url: string;
+  cancel_url: string | null; // null when we don't know the official page
   notes: string;
-  confidence: number; // 0 to 1, how sure we are the details are right
+  confidence: number | null; // 0 to 1; null until the extraction is verified
   reminder_channel: ReminderChannel;
 };

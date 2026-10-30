@@ -2,7 +2,12 @@
 // and the "trial ending soon" check. No Next.js code here.
 
 import { addDays, addMonths, daysBetween } from "./dates";
-import type { BillingPeriod, Subscription, SubscriptionStatus } from "./types";
+import type {
+  BillingPeriod,
+  ReminderChannel,
+  Subscription,
+  SubscriptionStatus,
+} from "./types";
 
 export const TRIAL_ENDING_SOON_DAYS = 3;
 
@@ -98,4 +103,40 @@ export function withComputedFields(sub: Subscription, today: string): Subscripti
     next_renewal_date: nextRenewalDate(sub.first_charge_date, sub.billing_period, today),
     status: statusFor(sub.status, sub.trial_end_date, today),
   };
+}
+
+/** What the add form collects; the rest of a Subscription is computed. */
+export type NewSubscriptionInput = {
+  service: string;
+  plan: string;
+  price: number;
+  currency: string;
+  billing_period: BillingPeriod;
+  trial_end_date: string | null;
+  first_charge_date: string;
+  notes: string;
+  reminder_channel: ReminderChannel;
+};
+
+/**
+ * Builds a full Subscription from form input: a new id, plus computed
+ * next_renewal_date and status. cancel_url starts as null (unknown).
+ */
+export function createSubscription(
+  input: NewSubscriptionInput,
+  today: string,
+  confidence: number | null,
+): Subscription {
+  const slug = input.service.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return withComputedFields(
+    {
+      ...input,
+      id: `${slug || "sub"}-${crypto.randomUUID().slice(0, 8)}`,
+      status: "active",
+      next_renewal_date: "",
+      cancel_url: null,
+      confidence,
+    },
+    today,
+  );
 }
