@@ -1,7 +1,6 @@
-// Home page ("/"): the subscription list. The heading is static; the list
-// depends on today's date, so it streams in behind a Suspense fallback.
+// Home page ("/"): the subscription list. The heading is static; the list is
+// a Client Component that reads saved data in the browser.
 
-import { Suspense } from "react";
 import { SubscriptionList } from "@/components/SubscriptionList";
 
 export default function Home() {
@@ -11,9 +10,7 @@ export default function Home() {
         <h1 className="text-3xl font-semibold tracking-tight">Unhook</h1>
         <p className="text-zinc-500">Your subscriptions and free trials, soonest renewal first.</p>
       </header>
-      <Suspense fallback={<p className="text-zinc-500">Loading subscriptions…</p>}>
-        <SubscriptionList />
-      </Suspense>
+      <SubscriptionList />
     </main>
   );
 }

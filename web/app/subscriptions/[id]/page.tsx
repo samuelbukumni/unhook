@@ -1,15 +1,14 @@
 // Detail and edit page at /subscriptions/[id]. The back link is static; the
-// subscription loads inside Suspense because params and today's date are
-// request-time values. Unknown ids get the 404 page via notFound().
+// id comes from params, which is a request-time value, so it's read inside
+// Suspense. The subscription itself loads from browser storage.
 
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { SubscriptionDetail } from "@/components/SubscriptionDetail";
-import { getSubscription, getToday } from "@/lib/data";
 import { MOCK_SUBSCRIPTION_IDS } from "@/lib/mock-data";
 
-// Prerender a page for every known id at build time.
+// Prerender a page for each demo id at build time. Ids added later (from
+// /add) still work; they render on request.
 export function generateStaticParams() {
   return MOCK_SUBSCRIPTION_IDS.map((id) => ({ id }));
 }
@@ -29,8 +28,5 @@ export default function SubscriptionPage({ params }: PageProps<"/subscriptions/[
 
 async function SubscriptionContent({ params }: Pick<PageProps<"/subscriptions/[id]">, "params">) {
   const { id } = await params;
-  const [sub, today] = await Promise.all([getSubscription(id), getToday()]);
-  if (!sub) notFound();
-
-  return <SubscriptionDetail initial={sub} today={today} />;
+  return <SubscriptionDetail id={id} />;
 }

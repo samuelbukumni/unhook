@@ -1,19 +1,29 @@
-// Loads the subscriptions, sorts them by next renewal, and renders the cost
-// summary plus one row per subscription. It is async (it waits on today's
-// date), so the page wraps it in <Suspense>.
+"use client";
 
-import { getSubscriptions, getToday } from "@/lib/data";
+// Loads the saved subscriptions, sorts them by next renewal, and renders the
+// cost summary plus one row per subscription. Data lives in the browser, so
+// the server (and the first render) shows a loading line instead.
+
+import { resetToMockData } from "@/lib/storage";
 import { isTrialEndingSoon, sortByNextRenewal } from "@/lib/subscriptions";
+import { useSubscriptions, useToday } from "@/lib/use-subscriptions";
 import { CostSummary } from "./CostSummary";
 import { SubscriptionRow } from "./SubscriptionRow";
 
-export async function SubscriptionList() {
-  const [subscriptions, today] = await Promise.all([getSubscriptions(), getToday()]);
+export function SubscriptionList() {
+  const subscriptions = useSubscriptions();
+  const today = useToday();
+
+  if (!subscriptions || !today) {
+    return <p className="text-zinc-500">Loading subscriptions…</p>;
+  }
+
   const sorted = sortByNextRenewal(subscriptions);
 
   return (
     <div className="flex flex-col gap-6">
       <CostSummary subscriptions={sorted} />
+      {sorted.length === 0 && <p className="text-zinc-500">No subscriptions yet.</p>}
       <ul className="flex flex-col gap-3">
         {sorted.map((sub) => (
           <SubscriptionRow
@@ -23,6 +33,15 @@ export async function SubscriptionList() {
           />
         ))}
       </ul>
+      <button
+        type="button"
+        onClick={() => {
+          if (confirm("Replace your saved subscriptions with the demo data?")) resetToMockData();
+        }}
+        className="self-start text-xs text-zinc-500 underline"
+      >
+        Reset demo data
+      </button>
     </div>
   );
 }

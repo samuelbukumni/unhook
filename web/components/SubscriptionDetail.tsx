@@ -1,23 +1,35 @@
 "use client";
 
 // Detail view for one subscription: summary line plus the edit form.
-// For now, changes live in this component's state only (they reset on reload);
-// a storage layer replaces this in the next step.
+// Reads from and saves to browser storage (lib/storage.ts).
 
-import { useState } from "react";
+import Link from "next/link";
 import { formatDate } from "@/lib/dates";
+import { saveSubscription } from "@/lib/storage";
 import { formatMoney } from "@/lib/subscriptions";
-import type { Subscription } from "@/lib/types";
+import { useSubscriptions, useToday } from "@/lib/use-subscriptions";
 import { SubscriptionEditor } from "./SubscriptionEditor";
 
-export function SubscriptionDetail({
-  initial,
-  today,
-}: {
-  initial: Subscription;
-  today: string;
-}) {
-  const [sub, setSub] = useState(initial);
+export function SubscriptionDetail({ id }: { id: string }) {
+  const subscriptions = useSubscriptions();
+  const today = useToday();
+
+  if (!subscriptions || !today) {
+    return <p className="text-zinc-500">Loading…</p>;
+  }
+
+  const sub = subscriptions.find((s) => s.id === id);
+  if (!sub) {
+    return (
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-semibold tracking-tight">Subscription not found</h1>
+        <p className="text-zinc-500">
+          It may have been removed, or it was saved in another browser.{" "}
+          <Link href="/" className="underline">See all subscriptions</Link>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -27,11 +39,12 @@ export function SubscriptionDetail({
         </h1>
         <p className="text-zinc-500">
           {formatMoney(sub.price, sub.currency)} {sub.billing_period} ·{" "}
-          <span className="capitalize">{sub.status}</span> · next charge{" "}
+          <span className="capitalize">{sub.status}</span> ·{" "}
+          {sub.status === "cancelled" ? "access ends" : "next charge"}{" "}
           {formatDate(sub.next_renewal_date)}
         </p>
       </header>
-      <SubscriptionEditor subscription={sub} today={today} onSave={setSub} />
+      <SubscriptionEditor subscription={sub} today={today} onSave={saveSubscription} />
     </div>
   );
 }
