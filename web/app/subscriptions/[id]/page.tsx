@@ -5,7 +5,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { SubscriptionDetail } from "@/components/SubscriptionDetail";
+import { Loading } from "@/components/Loading";
 import { MOCK_SUBSCRIPTION_IDS } from "@/lib/mock-data";
+import { backLinkClass, pageClass } from "@/lib/ui";
 
 // Prerender a page for each demo id at build time. Ids added later (from
 // /add) still work; they render on request.
@@ -15,11 +17,11 @@ export function generateStaticParams() {
 
 export default function SubscriptionPage({ params }: PageProps<"/subscriptions/[id]">) {
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-10">
-      <Link href="/" className="text-sm text-zinc-500 hover:underline">
-        ← Back to subscriptions
+    <main className={pageClass}>
+      <Link href="/" className={backLinkClass}>
+        <span aria-hidden="true">← </span>Back to subscriptions
       </Link>
-      <Suspense fallback={<p className="text-zinc-500">Loading…</p>}>
+      <Suspense fallback={<Loading />}>
         <SubscriptionContent params={params} />
       </Suspense>
     </main>

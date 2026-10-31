@@ -15,7 +15,7 @@ function isCurrent(pathname: string, href: string): boolean {
 export function NavLinks() {
   const pathname = usePathname();
   return (
-    <ul className="flex items-center gap-1 text-sm">
+    <ul className="flex items-center gap-0.5 text-sm sm:gap-1">
       {NAV_LINKS.map((link) => {
         const current = isCurrent(pathname, link.href);
         return (
@@ -23,7 +23,7 @@ export function NavLinks() {
             <Link
               href={link.href}
               aria-current={current ? "page" : undefined}
-              className={`rounded-lg px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-900 ${
+              className={`rounded-lg px-2 py-2 hover:bg-zinc-100 sm:px-3 dark:hover:bg-zinc-900 ${
                 current ? "font-medium text-zinc-900 dark:text-zinc-100" : "text-zinc-600 dark:text-zinc-300"
               }`}
             >

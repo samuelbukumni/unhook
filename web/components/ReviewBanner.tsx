@@ -7,7 +7,7 @@ import { needsReview } from "@/lib/review";
 
 export function ConfidenceBadge({ confidence }: { confidence: number | null }) {
   if (confidence === null) {
-    return <span className="text-xs text-zinc-500">Confidence: unknown</span>;
+    return <span className="text-xs text-zinc-600 dark:text-zinc-400">Confidence: unknown</span>;
   }
   const percent = Math.round(confidence * 100);
   const tone =

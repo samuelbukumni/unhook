@@ -7,7 +7,9 @@ import Link from "next/link";
 import { formatDate } from "@/lib/dates";
 import { saveSubscription } from "@/lib/storage";
 import { formatMoney } from "@/lib/subscriptions";
+import { emptyStateClass, h1Class, mutedClass } from "@/lib/ui";
 import { useSubscriptions, useToday } from "@/lib/use-subscriptions";
+import { Loading } from "./Loading";
 import { SubscriptionEditor } from "./SubscriptionEditor";
 
 export function SubscriptionDetail({ id }: { id: string }) {
@@ -15,15 +17,15 @@ export function SubscriptionDetail({ id }: { id: string }) {
   const today = useToday();
 
   if (!subscriptions || !today) {
-    return <p className="text-zinc-500">Loading…</p>;
+    return <Loading label="Loading subscription…" />;
   }
 
   const sub = subscriptions.find((s) => s.id === id);
   if (!sub) {
     return (
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold tracking-tight">Subscription not found</h1>
-        <p className="text-zinc-500">
+      <div className="flex flex-col gap-3">
+        <h1 className={h1Class}>Subscription not found</h1>
+        <p className={emptyStateClass}>
           It may have been removed, or it was saved in another browser.{" "}
           <Link href="/" className="underline">See all subscriptions</Link>
         </p>
@@ -33,18 +35,18 @@ export function SubscriptionDetail({ id }: { id: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">
-          {sub.service} <span className="text-zinc-500">{sub.plan}</span>
+      <header className="flex flex-col gap-1">
+        <h1 className={`${h1Class} break-words`}>
+          {sub.service} <span className={mutedClass}>{sub.plan}</span>
         </h1>
-        <p className="text-zinc-500">
+        <p className={mutedClass}>
           {formatMoney(sub.price, sub.currency)} {sub.billing_period} ·{" "}
           <span className="capitalize">{sub.status}</span> ·{" "}
           {sub.status === "cancelled" ? "access ends" : "next charge"}{" "}
           {formatDate(sub.next_renewal_date)}
         </p>
-        <Link href={`/subscriptions/${sub.id}/cancel`} className="mt-2 inline-block text-sm underline">
-          How to cancel {sub.service} →
+        <Link href={`/subscriptions/${sub.id}/cancel`} className="mt-1 self-start text-sm underline">
+          How to cancel {sub.service}<span aria-hidden="true"> →</span>
         </Link>
       </header>
       <SubscriptionEditor subscription={sub} today={today} onSave={saveSubscription} />

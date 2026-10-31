@@ -5,18 +5,24 @@
 
 import Link from "next/link";
 import { findCancelGuide } from "@/lib/cancel-guides";
+import { emptyStateClass, h1Class, mutedClass, primaryButtonClass } from "@/lib/ui";
 import { useSubscriptions } from "@/lib/use-subscriptions";
+import { Loading } from "./Loading";
 
 export function CancelGuideView({ id }: { id: string }) {
   const subscriptions = useSubscriptions();
-  if (!subscriptions) return <p className="text-zinc-500">Loading…</p>;
+  if (!subscriptions) return <Loading label="Loading cancel guide…" />;
 
   const sub = subscriptions.find((s) => s.id === id);
   if (!sub) {
     return (
-      <p className="text-zinc-500">
-        Subscription not found. <Link href="/" className="underline">See all subscriptions</Link>
-      </p>
+      <div className="flex flex-col gap-3">
+        <h1 className={h1Class}>Subscription not found</h1>
+        <p className={emptyStateClass}>
+          It may have been removed, or it was saved in another browser.{" "}
+          <Link href="/" className="underline">See all subscriptions</Link>
+        </p>
+      </div>
     );
   }
 
@@ -24,7 +30,7 @@ export function CancelGuideView({ id }: { id: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-semibold tracking-tight">How to cancel {sub.service}</h1>
+      <h1 className={`${h1Class} break-words`}>How to cancel {sub.service}</h1>
       {guide ? (
         <>
           <ol className="list-decimal space-y-2 pl-5">
@@ -37,30 +43,33 @@ export function CancelGuideView({ id }: { id: string }) {
               href={guide.cancel_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="self-start rounded-lg bg-zinc-900 px-4 py-2 text-white dark:bg-zinc-100 dark:text-zinc-900"
+              className={`self-start ${primaryButtonClass}`}
             >
-              Open {guide.name}&apos;s official cancel help ↗
+              Open {guide.name}&apos;s official cancel help
+              <span aria-hidden="true">&nbsp;↗</span>
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           ) : (
-            <p className="text-sm text-zinc-500">We don&apos;t have a confirmed official link for this one yet.</p>
+            <p className={`text-sm ${mutedClass}`}>We don&apos;t have a confirmed official link for this one yet.</p>
           )}
           {!guide.verified && (
-            <p className="text-xs text-zinc-500">
+            <p className={`text-xs ${mutedClass}`}>
               These steps haven&apos;t been checked by our team yet, and services change their menus. Follow
               what you see on the official page.
             </p>
           )}
         </>
       ) : (
-        <div className="rounded-xl border border-dashed border-zinc-300 p-4 text-zinc-600 dark:border-zinc-700">
-          <p className="font-medium">No cancel guide for {sub.service} yet.</p>
-          <p className="mt-1 text-sm">
+        <div className={emptyStateClass}>
+          <p className="font-medium text-zinc-900 dark:text-zinc-100">No cancel guide for {sub.service} yet.</p>
+          <p className="text-sm">
             Try the account or billing settings on the service&apos;s website. If you subscribed through
             Apple or Google Play, cancel in that store&apos;s subscription settings.
           </p>
           {sub.cancel_url && (
-            <a href={sub.cancel_url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm underline">
-              Saved cancel link ↗
+            <a href={sub.cancel_url} target="_blank" rel="noopener noreferrer" className="self-start text-sm underline">
+              Saved cancel link<span aria-hidden="true"> ↗</span>
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           )}
         </div>

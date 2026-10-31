@@ -11,6 +11,7 @@ import { extractFromText, MAX_RECEIPT_LENGTH, type ExtractResult } from "@/lib/e
 import { fieldsInIssues } from "@/lib/review";
 import { saveSubscription } from "@/lib/storage";
 import { createSubscription, type NewSubscriptionInput } from "@/lib/subscriptions";
+import { alertClass, h2Class, inputClass, mutedClass, primaryButtonClass } from "@/lib/ui";
 import { NewSubscriptionForm, type FormDefaults } from "./NewSubscriptionForm";
 import { ReviewBanner } from "./ReviewBanner";
 
@@ -98,30 +99,32 @@ export function AddSubscription() {
   return (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-medium">Paste a receipt or checkout page</h2>
+        <h2 id="receipt-heading" className={h2Class}>Paste a receipt or checkout page</h2>
         <textarea
+          aria-labelledby="receipt-heading"
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={6}
           maxLength={MAX_RECEIPT_LENGTH}
           placeholder="Paste the email or checkout text here…"
-          className="w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 dark:border-zinc-700"
+          className={inputClass}
         />
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={handleExtract}
             disabled={loading || !text.trim()}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+            aria-busy={loading}
+            className={primaryButtonClass}
           >
             {loading ? "Reading receipt…" : "Extract details"}
           </button>
-          <span className="text-xs text-zinc-500">
+          <span className={`text-xs ${mutedClass}`} aria-label={`${text.length} of ${MAX_RECEIPT_LENGTH} characters`}>
             {text.length}/{MAX_RECEIPT_LENGTH}
           </span>
         </div>
         {status.kind === "error" && (
-          <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+          <p role="alert" className={alertClass}>
             {status.message} You can still fill in the form below by hand.
           </p>
         )}
@@ -131,7 +134,7 @@ export function AddSubscription() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-medium">
+        <h2 className={h2Class}>
           {status.kind === "extracted" ? "Review the details" : "Or enter it manually"}
         </h2>
         <NewSubscriptionForm

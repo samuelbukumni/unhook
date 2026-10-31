@@ -3,6 +3,8 @@
 // On first run (nothing saved yet) it saves the mock data as a starting point.
 // Demo controls: loadDemoData() writes the 8 mock subscriptions, and
 // clearAllData() saves an empty list (so the mock data doesn't come back).
+// Saved data that can't be read (bad JSON, malformed items) is skipped and
+// reported through getLoadError() instead of crashing the page.
 // Browser-only: call these from Client Components, never during server render.
 
 import { toISODate } from "./dates";
@@ -16,6 +18,28 @@ const listeners = new Set<() => void>();
 // Cache so repeated reads return the same array (React needs a stable value).
 let cachedRaw: string | null = null;
 let cachedList: Subscription[] = [];
+let cachedError: string | null = null;
+
+const PERIODS = ["weekly", "monthly", "yearly"];
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Enough of a Subscription to render and compute dates without crashing. */
+function isReadable(item: unknown): item is Subscription {
+  if (!item || typeof item !== "object") return false;
+  const sub = item as Record<string, unknown>;
+  return (
+    typeof sub.id === "string" &&
+    typeof sub.service === "string" &&
+    typeof sub.price === "number" &&
+    Number.isFinite(sub.price) &&
+    typeof sub.currency === "string" &&
+    /^[A-Za-z]{3}$/.test(sub.currency) &&
+    PERIODS.includes(sub.billing_period as string) &&
+    typeof sub.first_charge_date === "string" &&
+    DATE.test(sub.first_charge_date) &&
+    (sub.trial_end_date === null || (typeof sub.trial_end_date === "string" && DATE.test(sub.trial_end_date)))
+  );
+}
 
 function readRaw(): string {
   let raw = localStorage.getItem(STORAGE_KEY);
@@ -26,26 +50,43 @@ function readRaw(): string {
   return raw;
 }
 
-function parse(raw: string): Subscription[] {
+function parse(raw: string): { list: Subscription[]; error: string | null } {
+  let data: unknown;
   try {
-    const data: unknown = JSON.parse(raw);
-    if (!Array.isArray(data)) return [];
-    // Saved dates can be days old, so refresh next renewal and trial status.
-    const today = toISODate(new Date());
-    return (data as Subscription[]).map((sub) => withComputedFields(sub, today));
+    data = JSON.parse(raw);
   } catch {
-    return [];
+    return { list: [], error: "Your saved data couldn't be read." };
   }
+  if (!Array.isArray(data)) return { list: [], error: "Your saved data couldn't be read." };
+
+  const readable = data.filter(isReadable);
+  const skipped = data.length - readable.length;
+  // Saved dates can be days old, so refresh next renewal and trial status.
+  const today = toISODate(new Date());
+  return {
+    list: readable.map((sub) => withComputedFields(sub, today)),
+    error: skipped > 0 ? `${skipped} saved item${skipped === 1 ? "" : "s"} couldn't be read.` : null,
+  };
 }
 
-/** All saved subscriptions. */
-export function loadSubscriptions(): Subscription[] {
+function refresh(): void {
   const raw = readRaw();
   if (raw !== cachedRaw) {
     cachedRaw = raw;
-    cachedList = parse(raw);
+    ({ list: cachedList, error: cachedError } = parse(raw));
   }
+}
+
+/** All saved subscriptions that could be read. */
+export function loadSubscriptions(): Subscription[] {
+  refresh();
   return cachedList;
+}
+
+/** A message when some or all saved data couldn't be read, else null. */
+export function getLoadError(): string | null {
+  refresh();
+  return cachedError;
 }
 
 /** Replaces the whole saved list and notifies listeners. */

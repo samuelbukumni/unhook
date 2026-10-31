@@ -7,6 +7,7 @@
 import type { ReviewField } from "@/lib/review";
 import type { NewSubscriptionInput } from "@/lib/subscriptions";
 import type { BillingPeriod, ReminderChannel } from "@/lib/types";
+import { inputClass, primaryButtonClass } from "@/lib/ui";
 
 /** Starting values; empty strings mean "unknown, please fill in". */
 export type FormDefaults = {
@@ -20,8 +21,6 @@ export type FormDefaults = {
   notes: string;
 };
 
-const inputClass =
-  "w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 dark:border-zinc-700";
 const flaggedInputClass =
   "w-full rounded-lg border-2 border-amber-500 bg-amber-50 px-3 py-2 dark:bg-amber-950/40";
 
@@ -82,7 +81,7 @@ export function NewSubscriptionForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
           {service.label}
           <input name="service" required defaultValue={defaults.service} className={service.className} />
@@ -132,7 +131,7 @@ export function NewSubscriptionForm({
           Email
         </label>
       </fieldset>
-      <button type="submit" className="self-start rounded-lg bg-zinc-900 px-4 py-2 text-white dark:bg-zinc-100 dark:text-zinc-900">
+      <button type="submit" className={`self-start ${primaryButtonClass}`}>
         Confirm and save
       </button>
     </form>

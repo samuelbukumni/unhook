@@ -4,7 +4,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { CancelGuideView } from "@/components/CancelGuideView";
+import { Loading } from "@/components/Loading";
 import { MOCK_SUBSCRIPTION_IDS } from "@/lib/mock-data";
+import { backLinkClass, pageClass } from "@/lib/ui";
 
 export function generateStaticParams() {
   return MOCK_SUBSCRIPTION_IDS.map((id) => ({ id }));
@@ -12,8 +14,8 @@ export function generateStaticParams() {
 
 export default function CancelPage({ params }: PageProps<"/subscriptions/[id]/cancel">) {
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-10">
-      <Suspense fallback={<p className="text-zinc-500">Loading…</p>}>
+    <main className={pageClass}>
+      <Suspense fallback={<Loading />}>
         <BackLink params={params} />
         <GuideContent params={params} />
       </Suspense>
@@ -26,8 +28,8 @@ type Params = Pick<PageProps<"/subscriptions/[id]/cancel">, "params">;
 async function BackLink({ params }: Params) {
   const { id } = await params;
   return (
-    <Link href={`/subscriptions/${id}`} className="text-sm text-zinc-500 hover:underline">
-      ← Back to subscription
+    <Link href={`/subscriptions/${id}`} className={backLinkClass}>
+      <span aria-hidden="true">← </span>Back to subscription
     </Link>
   );
 }

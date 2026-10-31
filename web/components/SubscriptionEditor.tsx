@@ -8,9 +8,7 @@ import { useState } from "react";
 import { formatDate } from "@/lib/dates";
 import { withComputedFields } from "@/lib/subscriptions";
 import type { BillingPeriod, ReminderChannel, Subscription } from "@/lib/types";
-
-const inputClass =
-  "w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 dark:border-zinc-700";
+import { dangerButtonClass, inputClass, primaryButtonClass } from "@/lib/ui";
 
 export function SubscriptionEditor({
   subscription: sub,
@@ -49,8 +47,8 @@ export function SubscriptionEditor({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} aria-label={`Edit ${sub.service}`} className="flex flex-col gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
           Price ({sub.currency})
           <input name="price" type="number" min="0" step="0.01" required defaultValue={sub.price} className={inputClass} />
@@ -88,19 +86,19 @@ export function SubscriptionEditor({
         </label>
       </fieldset>
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-white dark:bg-zinc-100 dark:text-zinc-900">
+        <button type="submit" className={primaryButtonClass}>
           Save changes
         </button>
         <button
           type="button"
           onClick={handleCancel}
           disabled={cancelled}
-          className="rounded-lg border border-red-300 px-4 py-2 text-red-700 disabled:opacity-50"
+          className={dangerButtonClass}
         >
           {cancelled ? "Cancelled" : "Mark as cancelled"}
         </button>
       </div>
-      {message && <p role="status" className="text-sm text-green-700">{message}</p>}
+      <p role="status" className="text-sm text-green-700 dark:text-green-400">{message}</p>
     </form>
   );
 }

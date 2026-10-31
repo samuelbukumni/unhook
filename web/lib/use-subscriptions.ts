@@ -4,12 +4,17 @@
 
 import { useSyncExternalStore } from "react";
 import { toISODate } from "./dates";
-import { loadSubscriptions, subscribe } from "./storage";
+import { getLoadError, loadSubscriptions, subscribe } from "./storage";
 import type { Subscription } from "./types";
 
 /** Saved subscriptions, or null until the browser has loaded them. */
 export function useSubscriptions(): Subscription[] | null {
   return useSyncExternalStore(subscribe, loadSubscriptions, () => null);
+}
+
+/** A message when saved data couldn't be read; null otherwise (and on the server). */
+export function useLoadError(): string | null {
+  return useSyncExternalStore(subscribe, getLoadError, () => null);
 }
 
 const noSubscribe = () => () => {};

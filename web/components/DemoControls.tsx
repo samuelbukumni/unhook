@@ -27,7 +27,7 @@ export function DemoControls() {
   }
 
   return (
-    <div role="group" aria-label="Demo data" className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+    <div role="group" aria-label="Demo data" className="flex flex-wrap items-center gap-1 text-xs text-zinc-600 dark:text-zinc-400">
       <span>Demo:</span>
       <button type="button" onClick={handleLoad} className={buttonClass}>
         Load demo data

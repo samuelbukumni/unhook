@@ -28,10 +28,10 @@ export function SiteHeader() {
 /** Same links without the current-page highlight, shown until the URL is known. */
 function PlainLinks() {
   return (
-    <ul className="flex items-center gap-1 text-sm">
+    <ul className="flex items-center gap-0.5 text-sm sm:gap-1">
       {NAV_LINKS.map((link) => (
         <li key={link.href}>
-          <Link href={link.href} className="rounded-lg px-3 py-2 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900">
+          <Link href={link.href} className="rounded-lg px-2 py-2 text-zinc-600 hover:bg-zinc-100 sm:px-3 dark:text-zinc-300 dark:hover:bg-zinc-900">
             {link.label}
           </Link>
         </li>

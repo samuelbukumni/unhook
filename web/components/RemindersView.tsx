@@ -7,7 +7,9 @@
 import Link from "next/link";
 import { addDays, formatDate } from "@/lib/dates";
 import { upcomingReminders, type UpcomingReminder } from "@/lib/reminders";
+import { cardClass, emptyStateClass, mutedClass } from "@/lib/ui";
 import { useSubscriptions, useToday } from "@/lib/use-subscriptions";
+import { Loading } from "./Loading";
 import { NotificationTest } from "./NotificationTest";
 
 const WINDOW_DAYS = 7;
@@ -30,7 +32,7 @@ export function RemindersView() {
   const today = useToday();
 
   if (!subscriptions || !today) {
-    return <p className="text-zinc-500">Loading reminders…</p>;
+    return <Loading label="Loading reminders…" />;
   }
 
   const reminders = upcomingReminders(subscriptions, today, WINDOW_DAYS);
@@ -39,22 +41,26 @@ export function RemindersView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <section aria-labelledby="test-heading" className="flex flex-col gap-2 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+      <section aria-labelledby="test-heading" className={`flex flex-col gap-2 ${cardClass}`}>
         <h2 id="test-heading" className="font-medium">Try a notification</h2>
-        <p className="text-sm text-zinc-500">
+        <p className={`text-sm ${mutedClass}`}>
           Shows one browser notification now. Scheduled reminders aren&apos;t sent yet.
         </p>
         <NotificationTest body={sample} />
       </section>
 
       {days.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-zinc-300 p-4 text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
-          No reminders in the next {WINDOW_DAYS} days.
-        </p>
+        <div className={emptyStateClass}>
+          <p className="font-medium text-zinc-900 dark:text-zinc-100">No reminders in the next {WINDOW_DAYS} days</p>
+          <p className="text-sm">
+            Nothing renews or ends its trial soon.{" "}
+            <Link href="/" className="underline">See all subscriptions</Link>
+          </p>
+        </div>
       ) : (
         days.map((day) => (
           <section key={day} aria-labelledby={`day-${day}`} className="flex flex-col gap-2">
-            <h2 id={`day-${day}`} className="text-sm font-medium text-zinc-500">
+            <h2 id={`day-${day}`} className={`text-sm font-medium ${mutedClass}`}>
               {dayLabel(day, today)}
             </h2>
             <ul className="flex flex-col gap-2">
@@ -67,7 +73,7 @@ export function RemindersView() {
                       className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-200 p-3 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
                     >
                       <span>{describe(r)}</span>
-                      <span className="text-xs text-zinc-500">{r.channel === "push" ? "Push" : "Email"}</span>
+                      <span className={`text-xs ${mutedClass}`}>{r.channel === "push" ? "Push" : "Email"}</span>
                     </Link>
                   </li>
                 ))}
