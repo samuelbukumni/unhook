@@ -4,7 +4,6 @@
 // cost summary plus one row per subscription. Data lives in the browser, so
 // the server (and the first render) shows a loading line instead.
 
-import { resetToMockData } from "@/lib/storage";
 import { isTrialEndingSoon, sortByNextRenewal } from "@/lib/subscriptions";
 import { useSubscriptions, useToday } from "@/lib/use-subscriptions";
 import { CostSummary } from "./CostSummary";
@@ -33,15 +32,6 @@ export function SubscriptionList() {
           />
         ))}
       </ul>
-      <button
-        type="button"
-        onClick={() => {
-          if (confirm("Replace your saved subscriptions with the demo data?")) resetToMockData();
-        }}
-        className="self-start text-xs text-zinc-500 underline"
-      >
-        Reset demo data
-      </button>
     </div>
   );
 }

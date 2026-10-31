@@ -1,6 +1,8 @@
 // Loading and saving subscriptions. Today this uses the browser's
 // localStorage; swapping in a real database later only touches this file.
 // On first run (nothing saved yet) it saves the mock data as a starting point.
+// Demo controls: loadDemoData() writes the 8 mock subscriptions, and
+// clearAllData() saves an empty list (so the mock data doesn't come back).
 // Browser-only: call these from Client Components, never during server render.
 
 import { toISODate } from "./dates";
@@ -58,9 +60,14 @@ export function saveSubscription(sub: Subscription): void {
   saveSubscriptions([...others, sub]);
 }
 
-/** Puts the mock data back (handy for demos). */
-export function resetToMockData(): void {
+/** Replaces everything with the 8 mock subscriptions (handy for demos). */
+export function loadDemoData(): void {
   saveSubscriptions(buildMockSubscriptions(toISODate(new Date())));
+}
+
+/** Deletes every saved subscription, leaving an empty list. */
+export function clearAllData(): void {
+  saveSubscriptions([]);
 }
 
 /** Calls `listener` whenever the data changes, in this tab or another one. */
