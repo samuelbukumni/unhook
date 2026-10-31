@@ -1,10 +1,10 @@
-// Tests for lib/reminders.ts using Node's built-in test runner.
+// Tests for lib/reminders.ts (dueReminders, upcomingReminders) using Node's built-in test runner.
 // Run from web/: npm test   (needs Node 22.18+ or 23.6+, which strip
 // TypeScript types natively; on Node 22.6-22.17 add --experimental-strip-types)
 
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { dueReminders } from "../lib/reminders.ts";
+import { dueReminders, upcomingReminders } from "../lib/reminders.ts";
 
 const TODAY = "2026-10-30";
 
@@ -98,4 +98,28 @@ test("sorts most urgent first, then by service name", () => {
 
 test("empty list gives no reminders", () => {
   assert.deepEqual(dueReminders([], TODAY), []);
+});
+
+test("upcomingReminders covers today through 6 days ahead", () => {
+  // Renews Nov 3: reminders fire Oct 31 (3 days), Nov 2 (1 day), Nov 3 (day of).
+  const result = upcomingReminders([sub({ next_renewal_date: "2026-11-03" })], TODAY);
+  assert.deepEqual(
+    result.map((r) => [r.remind_on, r.days_before]),
+    [["2026-10-31", 3], ["2026-11-02", 1], ["2026-11-03", 0]],
+  );
+});
+
+test("upcomingReminders stops after the window and skips cancelled", () => {
+  // Nov 6 is 7 days after Oct 30, so its "on the day" reminder is outside.
+  const result = upcomingReminders(
+    [sub({ next_renewal_date: "2026-11-06" }), sub({ id: "x", status: "cancelled", next_renewal_date: TODAY })],
+    TODAY,
+  );
+  assert.deepEqual(result.map((r) => [r.remind_on, r.days_before]), [["2026-11-03", 3], ["2026-11-05", 1]]);
+});
+
+test("upcomingReminders handles month and year ends, and custom windows", () => {
+  const result = upcomingReminders([sub({ next_renewal_date: "2027-01-01" })], "2026-12-30", 3);
+  assert.deepEqual(result.map((r) => r.remind_on), ["2026-12-31", "2027-01-01"]);
+  assert.deepEqual(upcomingReminders([], TODAY), []);
 });

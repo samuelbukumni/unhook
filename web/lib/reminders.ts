@@ -1,5 +1,6 @@
 // Which reminders are due today: 3 days before, 1 day before, and on the day
-// of each renewal or trial end. Pure function, no side effects.
+// of each renewal or trial end. Also lists the reminders for the next few
+// days (for the /reminders page). Pure functions, no side effects.
 //
 // This file only has type imports so Node can run it directly for tests
 // (`npm test` uses Node's built-in type stripping).
@@ -53,4 +54,33 @@ export function dueReminders(subs: Subscription[], today: string): DueReminder[]
 
   // Most urgent first, then by service name.
   return due.sort((a, b) => a.days_before - b.days_before || a.service.localeCompare(b.service));
+}
+
+export type UpcomingReminder = DueReminder & {
+  remind_on: string; // "YYYY-MM-DD" the reminder fires
+};
+
+/** "YYYY-MM-DD" plus whole days (UTC math, so no daylight-saving shifts). */
+function plusDays(isoDate: string, days: number): string {
+  return new Date((dayNumber(isoDate) + days) * 86_400_000).toISOString().slice(0, 10);
+}
+
+/**
+ * Reminders that fire from `today` through `today + days - 1` (7 days by
+ * default), soonest first. One renewal can appear up to three times (3 days
+ * before, 1 day before, on the day).
+ */
+export function upcomingReminders(
+  subs: Subscription[],
+  today: string,
+  days = 7,
+): UpcomingReminder[] {
+  const upcoming: UpcomingReminder[] = [];
+  for (let offset = 0; offset < days; offset++) {
+    const day = plusDays(today, offset);
+    for (const reminder of dueReminders(subs, day)) {
+      upcoming.push({ ...reminder, remind_on: day });
+    }
+  }
+  return upcoming;
 }
