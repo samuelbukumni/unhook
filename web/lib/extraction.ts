@@ -1,5 +1,9 @@
 // Client helper for POST /api/extract, which turns pasted receipt text into
-// subscription details. The response type mirrors the route's JSON schema.
+// subscription details. The response type mirrors the route's JSON schema;
+// `confidence` and `issues` are newer, optional fields, cleaned up here so the
+// UI works with both the old and the new response shape.
+
+import { readConfidence, readIssues } from "./review";
 
 export type ExtractResult = {
   service: string;
@@ -10,6 +14,8 @@ export type ExtractResult = {
   trial_end_date: string | null;
   first_charge_date: string | null;
   notes: string;
+  confidence?: number | null; // 0 to 1; null when missing or malformed
+  issues?: string[]; // things the model wasn't sure about
 };
 
 export const MAX_RECEIPT_LENGTH = 8000; // the route rejects longer text
@@ -38,5 +44,13 @@ export async function extractFromText(text: string): Promise<ExtractResult> {
   if (!data || typeof data !== "object" || typeof (data as ExtractResult).service !== "string") {
     throw new Error("The extraction came back in an unexpected shape.");
   }
-  return data as ExtractResult;
+  const result = data as Omit<ExtractResult, "confidence" | "issues"> & {
+    confidence?: unknown;
+    issues?: unknown;
+  };
+  return {
+    ...result,
+    confidence: readConfidence(result.confidence),
+    issues: readIssues(result.issues),
+  };
 }

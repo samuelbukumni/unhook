@@ -1,8 +1,10 @@
 "use client";
 
 // The editable form used on /add, both for manual entry and for reviewing an
-// extraction. Nothing is saved until the user presses "Confirm and save".
+// extraction. Fields named in the extraction's issues get an amber "Check"
+// highlight. Nothing is saved until the user presses "Confirm and save".
 
+import type { ReviewField } from "@/lib/review";
 import type { NewSubscriptionInput } from "@/lib/subscriptions";
 import type { BillingPeriod, ReminderChannel } from "@/lib/types";
 
@@ -20,12 +22,18 @@ export type FormDefaults = {
 
 const inputClass =
   "w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 dark:border-zinc-700";
+const flaggedInputClass =
+  "w-full rounded-lg border-2 border-amber-500 bg-amber-50 px-3 py-2 dark:bg-amber-950/40";
+
+const NO_FIELDS: ReadonlySet<ReviewField> = new Set();
 
 export function NewSubscriptionForm({
   defaults,
+  flagged = NO_FIELDS,
   onSave,
 }: {
   defaults: FormDefaults;
+  flagged?: ReadonlySet<ReviewField>;
   onSave: (input: NewSubscriptionInput) => void;
 }) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -45,28 +53,55 @@ export function NewSubscriptionForm({
     });
   }
 
+  /** Label text plus a "Check" tag, and the input class, for one field. */
+  function field(name: ReviewField, label: string) {
+    const isFlagged = flagged.has(name);
+    return {
+      label: (
+        <span className="flex items-center gap-2">
+          {label}
+          {isFlagged && (
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+              Check
+            </span>
+          )}
+        </span>
+      ),
+      className: isFlagged ? flaggedInputClass : inputClass,
+    };
+  }
+
+  const service = field("service", "Service");
+  const plan = field("plan", "Plan (optional)");
+  const price = field("price", "Price");
+  const currency = field("currency", "Currency (e.g. USD, NGN)");
+  const period = field("billing_period", "Billing period");
+  const firstCharge = field("first_charge_date", "First charge");
+  const trialEnd = field("trial_end_date", "Trial ends (optional)");
+  const notes = field("notes", "Notes");
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-4">
         <label className="flex flex-col gap-1 text-sm">
-          Service
-          <input name="service" required defaultValue={defaults.service} className={inputClass} />
+          {service.label}
+          <input name="service" required defaultValue={defaults.service} className={service.className} />
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          Plan (optional)
-          <input name="plan" defaultValue={defaults.plan} className={inputClass} />
+          {plan.label}
+          <input name="plan" defaultValue={defaults.plan} className={plan.className} />
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          Price
-          <input name="price" type="number" min="0" step="0.01" required defaultValue={defaults.price} className={inputClass} />
+          {price.label}
+          <input name="price" type="number" min="0" step="0.01" required defaultValue={defaults.price} className={price.className} />
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          Currency (e.g. USD, NGN)
-          <input name="currency" required pattern="[A-Za-z]{3}" maxLength={3} defaultValue={defaults.currency} className={inputClass} />
+          {currency.label}
+          <input name="currency" required pattern="[A-Za-z]{3}" maxLength={3} defaultValue={defaults.currency} className={currency.className} />
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          Billing period
-          <select name="billing_period" required defaultValue={defaults.billing_period} className={inputClass}>
+          {period.label}
+          <select name="billing_period" required defaultValue={defaults.billing_period} className={period.className}>
             <option value="" disabled>Choose…</option>
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
@@ -74,17 +109,17 @@ export function NewSubscriptionForm({
           </select>
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          First charge
-          <input name="first_charge_date" type="date" required defaultValue={defaults.first_charge_date} className={inputClass} />
+          {firstCharge.label}
+          <input name="first_charge_date" type="date" required defaultValue={defaults.first_charge_date} className={firstCharge.className} />
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          Trial ends (optional)
-          <input name="trial_end_date" type="date" defaultValue={defaults.trial_end_date} className={inputClass} />
+          {trialEnd.label}
+          <input name="trial_end_date" type="date" defaultValue={defaults.trial_end_date} className={trialEnd.className} />
         </label>
       </div>
       <label className="flex flex-col gap-1 text-sm">
-        Notes
-        <textarea name="notes" rows={2} defaultValue={defaults.notes} className={inputClass} />
+        {notes.label}
+        <textarea name="notes" rows={2} defaultValue={defaults.notes} className={notes.className} />
       </label>
       <fieldset className="flex gap-4 text-sm">
         <legend className="mb-1">Remind me by</legend>

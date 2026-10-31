@@ -2,14 +2,17 @@
 
 // The /add flow: paste receipt text and extract it with AI, or fill in the
 // form by hand. Either way the user reviews the form and confirms before saving.
+// After an extraction it shows the review banner and highlights flagged fields.
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toISODate } from "@/lib/dates";
 import { extractFromText, MAX_RECEIPT_LENGTH, type ExtractResult } from "@/lib/extraction";
+import { fieldsInIssues } from "@/lib/review";
 import { saveSubscription } from "@/lib/storage";
 import { createSubscription, type NewSubscriptionInput } from "@/lib/subscriptions";
 import { NewSubscriptionForm, type FormDefaults } from "./NewSubscriptionForm";
+import { ReviewBanner } from "./ReviewBanner";
 
 const EMPTY: FormDefaults = {
   service: "",
@@ -26,20 +29,30 @@ type Status =
   | { kind: "idle" }
   | { kind: "loading" }
   | { kind: "error"; message: string }
-  | { kind: "extracted"; warning: string | null };
+  | {
+      kind: "extracted";
+      warning: string | null;
+      confidence: number | null;
+      issues: string[];
+    };
+
+/** A string value, or "" for null, missing, or the wrong type. */
+function text(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
 
 /** Turns the route's answer into form defaults; unknowns stay empty. */
 function toDefaults(result: ExtractResult): FormDefaults {
   const period = result.billing_period;
   return {
-    service: result.service,
-    plan: result.plan ?? "",
-    price: result.price === null ? "" : String(result.price),
-    currency: result.currency ?? "",
+    service: text(result.service),
+    plan: text(result.plan),
+    price: typeof result.price === "number" ? String(result.price) : "",
+    currency: text(result.currency),
     billing_period: period === "weekly" || period === "monthly" || period === "yearly" ? period : "",
-    trial_end_date: result.trial_end_date ?? "",
-    first_charge_date: result.first_charge_date ?? "",
-    notes: result.notes,
+    trial_end_date: text(result.trial_end_date),
+    first_charge_date: text(result.first_charge_date),
+    notes: text(result.notes),
   };
 }
 
@@ -60,16 +73,21 @@ export function AddSubscription() {
         result.billing_period === "one_time"
           ? "This looks like a one-time purchase, not a subscription. Pick a billing period if it does repeat."
           : null;
-      setStatus({ kind: "extracted", warning });
+      setStatus({
+        kind: "extracted",
+        warning,
+        confidence: result.confidence ?? null,
+        issues: result.issues ?? [],
+      });
     } catch (error) {
       setStatus({ kind: "error", message: (error as Error).message });
     }
   }
 
   function handleSave(input: NewSubscriptionInput) {
-    // Extracted details haven't been verified yet (confidence null); manual
-    // entries come straight from the user (confidence 1).
-    const confidence = status.kind === "extracted" ? null : 1;
+    // Extracted details keep the model's confidence (null when it gave none);
+    // manual entries come straight from the user (confidence 1).
+    const confidence = status.kind === "extracted" ? status.confidence : 1;
     const sub = createSubscription(input, toISODate(new Date()), confidence);
     saveSubscription(sub);
     router.push(`/subscriptions/${sub.id}`);
@@ -108,10 +126,7 @@ export function AddSubscription() {
           </p>
         )}
         {status.kind === "extracted" && (
-          <p role="status" className="rounded-lg bg-green-50 p-3 text-sm text-green-800">
-            Details extracted. Check them below, fix anything wrong, then save.
-            {status.warning && <> {status.warning}</>}
-          </p>
+          <ReviewBanner confidence={status.confidence} issues={status.issues} warning={status.warning} />
         )}
       </section>
 
@@ -119,7 +134,12 @@ export function AddSubscription() {
         <h2 className="text-lg font-medium">
           {status.kind === "extracted" ? "Review the details" : "Or enter it manually"}
         </h2>
-        <NewSubscriptionForm key={formVersion} defaults={defaults} onSave={handleSave} />
+        <NewSubscriptionForm
+          key={formVersion}
+          defaults={defaults}
+          flagged={status.kind === "extracted" ? fieldsInIssues(status.issues) : undefined}
+          onSave={handleSave}
+        />
       </section>
     </div>
   );
