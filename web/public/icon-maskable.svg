@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Unhook</title>
+  <rect width="512" height="512" fill="#18181b"/>
+  <g transform="translate(256 256) scale(0.7) translate(-256 -256)">
+    <path d="M176 128v152a80 80 0 0 0 160 0v-40" fill="none" stroke="#ffffff" stroke-width="48" stroke-linecap="round"/>
+    <path d="M336 168l0 0" stroke="#fbbf24" stroke-width="48" stroke-linecap="round"/>
+  </g>
+</svg>
