@@ -73,13 +73,23 @@ function isRateLimited(ip: string): boolean {
 
 // Checks done in plain code, with no model involved.
 function isIsoDate(value: string): boolean {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  // Date.parse normalizes impossible days (Feb 30 -> Mar 2), so compare parts.
+  const [y, m, d] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return (
+    date.getUTCFullYear() === y &&
+    date.getUTCMonth() === m - 1 &&
+    date.getUTCDate() === d
+  );
 }
 
 function checkExtraction(e: Extraction, source: string, today: string): string[] {
   const issues: string[] = [];
 
-  if (!source.toLowerCase().includes(e.service.toLowerCase())) {
+  if (!e.service.trim()) {
+    issues.push("service: couldn't be determined");
+  } else if (!source.toLowerCase().includes(e.service.toLowerCase())) {
     issues.push("service: this name doesn't appear in the text");
   }
 
@@ -154,6 +164,13 @@ async function verify(
 }
 
 export async function POST(request: Request) {
+  if (!process.env.MODEL_API_KEY) {
+    return NextResponse.json(
+      { error: "Extraction isn't set up on this server (missing MODEL_API_KEY)." },
+      { status: 500 },
+    );
+  }
+
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   if (isRateLimited(ip)) {
     return NextResponse.json(

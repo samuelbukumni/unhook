@@ -60,11 +60,18 @@ export function isTrialEndingSoon(sub: Subscription, today: string): boolean {
   return daysLeft >= 0 && daysLeft <= TRIAL_ENDING_SOON_DAYS;
 }
 
-/** Formats an amount like "$12.00". */
+/**
+ * Formats an amount like "$12.00". Falls back to "XXX 12.00" when the
+ * currency code isn't a real ISO code (bad saved data must not crash pages).
+ */
 export function formatMoney(amount: number, currency: string): string {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
-    amount,
-  );
+  try {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
+      amount,
+    );
+  } catch {
+    return `${currency} ${amount.toFixed(2)}`;
+  }
 }
 
 /**

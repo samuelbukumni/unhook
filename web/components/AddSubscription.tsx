@@ -59,7 +59,7 @@ function toDefaults(result: ExtractResult): FormDefaults {
 
 export function AddSubscription() {
   const router = useRouter();
-  const [text, setText] = useState("");
+  const [receiptText, setReceiptText] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [defaults, setDefaults] = useState<FormDefaults>(EMPTY);
   const [formVersion, setFormVersion] = useState(0); // bump to reload the form
@@ -67,7 +67,7 @@ export function AddSubscription() {
   async function handleExtract() {
     setStatus({ kind: "loading" });
     try {
-      const result = await extractFromText(text);
+      const result = await extractFromText(receiptText);
       setDefaults(toDefaults(result));
       setFormVersion((v) => v + 1);
       const warning =
@@ -102,8 +102,8 @@ export function AddSubscription() {
         <h2 id="receipt-heading" className={h2Class}>Paste a receipt or checkout page</h2>
         <textarea
           aria-labelledby="receipt-heading"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+          value={receiptText}
+          onChange={(e) => setReceiptText(e.target.value)}
           rows={6}
           maxLength={MAX_RECEIPT_LENGTH}
           placeholder="Paste the email or checkout text here…"
@@ -113,14 +113,14 @@ export function AddSubscription() {
           <button
             type="button"
             onClick={handleExtract}
-            disabled={loading || !text.trim()}
+            disabled={loading || !receiptText.trim()}
             aria-busy={loading}
             className={primaryButtonClass}
           >
             {loading ? "Reading receipt…" : "Extract details"}
           </button>
-          <span className={`text-xs ${mutedClass}`} aria-label={`${text.length} of ${MAX_RECEIPT_LENGTH} characters`}>
-            {text.length}/{MAX_RECEIPT_LENGTH}
+          <span className={`text-xs ${mutedClass}`} aria-label={`${receiptText.length} of ${MAX_RECEIPT_LENGTH} characters`}>
+            {receiptText.length}/{MAX_RECEIPT_LENGTH}
           </span>
         </div>
         {status.kind === "error" && (

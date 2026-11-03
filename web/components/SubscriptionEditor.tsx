@@ -46,8 +46,12 @@ export function SubscriptionEditor({
     setMessage("Marked as cancelled. It no longer counts toward your totals.");
   }
 
+  // Keyed on the saved data (not the component): after a save the form
+  // remounts with fresh defaultValues, while the confirmation message below
+  // (component state) survives.
   return (
-    <form onSubmit={handleSubmit} aria-label={`Edit ${sub.service}`} className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
+      <form key={JSON.stringify(sub)} onSubmit={handleSubmit} aria-label={`Edit ${sub.service}`} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
           Price ({sub.currency})
@@ -98,7 +102,8 @@ export function SubscriptionEditor({
           {cancelled ? "Cancelled" : "Mark as cancelled"}
         </button>
       </div>
-      <p role="status" className="text-sm text-green-700 dark:text-green-400">{message}</p>
-    </form>
+      </form>
+      <p role="status" className="text-sm text-emerald-700 dark:text-emerald-400">{message}</p>
+    </div>
   );
 }
