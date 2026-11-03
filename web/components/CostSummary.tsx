@@ -14,11 +14,11 @@ export function CostSummary({ subscriptions }: { subscriptions: Subscription[] }
         <div key={currency} className="contents">
           <div className={cardClass}>
             <p className={`text-sm ${mutedClass}`}>Per month</p>
-            <p className="text-xl font-semibold sm:text-2xl">{formatMoney(monthly, currency)}</p>
+            <p className="text-xl font-semibold tabular-nums tracking-tight sm:text-2xl">{formatMoney(monthly, currency)}</p>
           </div>
           <div className={cardClass}>
             <p className={`text-sm ${mutedClass}`}>Per year</p>
-            <p className="text-xl font-semibold sm:text-2xl">{formatMoney(yearly, currency)}</p>
+            <p className="text-xl font-semibold tabular-nums tracking-tight sm:text-2xl">{formatMoney(yearly, currency)}</p>
           </div>
         </div>
       ))}

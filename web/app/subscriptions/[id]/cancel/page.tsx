@@ -5,12 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { CancelGuideView } from "@/components/CancelGuideView";
 import { Loading } from "@/components/Loading";
-import { MOCK_SUBSCRIPTION_IDS } from "@/lib/mock-data";
 import { backLinkClass, pageClass } from "@/lib/ui";
-
-export function generateStaticParams() {
-  return MOCK_SUBSCRIPTION_IDS.map((id) => ({ id }));
-}
 
 export default function CancelPage({ params }: PageProps<"/subscriptions/[id]/cancel">) {
   return (

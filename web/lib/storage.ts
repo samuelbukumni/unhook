@@ -1,14 +1,11 @@
 // Loading and saving subscriptions. Today this uses the browser's
 // localStorage; swapping in a real database later only touches this file.
-// On first run (nothing saved yet) it saves the mock data as a starting point.
-// Demo controls: loadDemoData() writes the 8 mock subscriptions, and
-// clearAllData() saves an empty list (so the mock data doesn't come back).
+// A first run (nothing saved yet) starts with an empty list.
 // Saved data that can't be read (bad JSON, malformed items) is skipped and
 // reported through getLoadError() instead of crashing the page.
 // Browser-only: call these from Client Components, never during server render.
 
 import { toISODate } from "./dates";
-import { buildMockSubscriptions } from "./mock-data";
 import { withComputedFields } from "./subscriptions";
 import type { Subscription } from "./types";
 
@@ -42,10 +39,10 @@ function isReadable(item: unknown): item is Subscription {
 }
 
 function readRaw(): string {
-  let raw = localStorage.getItem(STORAGE_KEY);
+  const raw = localStorage.getItem(STORAGE_KEY);
   if (raw === null) {
-    raw = JSON.stringify(buildMockSubscriptions(toISODate(new Date())));
-    localStorage.setItem(STORAGE_KEY, raw);
+    localStorage.setItem(STORAGE_KEY, "[]");
+    return "[]";
   }
   return raw;
 }
@@ -99,16 +96,6 @@ export function saveSubscriptions(subs: Subscription[]): void {
 export function saveSubscription(sub: Subscription): void {
   const others = loadSubscriptions().filter((s) => s.id !== sub.id);
   saveSubscriptions([...others, sub]);
-}
-
-/** Replaces everything with the 8 mock subscriptions (handy for demos). */
-export function loadDemoData(): void {
-  saveSubscriptions(buildMockSubscriptions(toISODate(new Date())));
-}
-
-/** Deletes every saved subscription, leaving an empty list. */
-export function clearAllData(): void {
-  saveSubscriptions([]);
 }
 
 /** Calls `listener` whenever the data changes, in this tab or another one. */

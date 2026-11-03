@@ -3,7 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --focus: #2563eb;
+  --focus: #047857;
 }
 
 @theme inline {
@@ -17,7 +17,7 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
-    --focus: #60a5fa;
+    --focus: #34d399;
   }
 }
 
@@ -25,6 +25,18 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: #a7f3d0;
+  color: #022c22;
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background: #065f46;
+    color: #ecfdf5;
+  }
 }
 
 /* A clear focus ring for keyboard users on every link and control. */

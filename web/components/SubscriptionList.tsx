@@ -6,7 +6,7 @@
 
 import Link from "next/link";
 import { isTrialEndingSoon, sortByNextRenewal } from "@/lib/subscriptions";
-import { emptyStateClass } from "@/lib/ui";
+import { emptyStateClass, primaryButtonClass } from "@/lib/ui";
 import { useSubscriptions, useToday } from "@/lib/use-subscriptions";
 import { CostSummary } from "./CostSummary";
 import { Loading } from "./Loading";
@@ -25,9 +25,12 @@ export function SubscriptionList() {
       <div className={emptyStateClass}>
         <p className="font-medium text-zinc-900 dark:text-zinc-100">No subscriptions yet</p>
         <p className="text-sm">
-          <Link href="/add" className="underline">Add one from a receipt</Link>, or use{" "}
-          <strong>Load demo data</strong> at the bottom of the page to try Unhook with examples.
+          Add your first one — paste a receipt and Unhook reads the details,
+          or enter them by hand.
         </p>
+        <Link href="/add" className={`self-start text-sm ${primaryButtonClass}`}>
+          Add a subscription
+        </Link>
       </div>
     );
   }

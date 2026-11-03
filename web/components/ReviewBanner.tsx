@@ -12,7 +12,7 @@ export function ConfidenceBadge({ confidence }: { confidence: number | null }) {
   const percent = Math.round(confidence * 100);
   const tone =
     confidence >= 0.8
-      ? "bg-green-100 text-green-800"
+      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
       : confidence >= 0.5
         ? "bg-amber-100 text-amber-800"
         : "bg-red-100 text-red-800";
@@ -34,7 +34,7 @@ export function ReviewBanner({
 }) {
   if (!needsReview(confidence, issues)) {
     return (
-      <div role="status" className="flex flex-col gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-800 dark:bg-green-950/40 dark:text-green-200">
+      <div role="status" className="flex flex-col gap-2 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200">
         <p>
           Details extracted. Check them below, fix anything wrong, then save.
           {warning && <> {warning}</>}

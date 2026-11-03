@@ -12,7 +12,10 @@ export function SiteHeader() {
   return (
     <header className="border-b border-zinc-200 dark:border-zinc-800">
       <div className="mx-auto flex w-full max-w-2xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
+        <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+          <span aria-hidden="true" className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-700 text-xs font-bold text-white dark:bg-emerald-400 dark:text-emerald-950">
+            U
+          </span>
           Unhook
         </Link>
         <nav aria-label="Main">

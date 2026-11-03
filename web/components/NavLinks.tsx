@@ -23,8 +23,10 @@ export function NavLinks() {
             <Link
               href={link.href}
               aria-current={current ? "page" : undefined}
-              className={`rounded-lg px-2 py-2 hover:bg-zinc-100 sm:px-3 dark:hover:bg-zinc-900 ${
-                current ? "font-medium text-zinc-900 dark:text-zinc-100" : "text-zinc-600 dark:text-zinc-300"
+              className={`rounded-lg px-2 py-2 transition-colors hover:bg-zinc-100 sm:px-3 dark:hover:bg-zinc-900 ${
+                current
+                  ? "bg-emerald-50 font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+                  : "text-zinc-600 dark:text-zinc-300"
               }`}
             >
               {link.label}

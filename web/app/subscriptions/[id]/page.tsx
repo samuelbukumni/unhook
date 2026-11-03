@@ -6,14 +6,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { SubscriptionDetail } from "@/components/SubscriptionDetail";
 import { Loading } from "@/components/Loading";
-import { MOCK_SUBSCRIPTION_IDS } from "@/lib/mock-data";
 import { backLinkClass, pageClass } from "@/lib/ui";
-
-// Prerender a page for each demo id at build time. Ids added later (from
-// /add) still work; they render on request.
-export function generateStaticParams() {
-  return MOCK_SUBSCRIPTION_IDS.map((id) => ({ id }));
-}
 
 export default function SubscriptionPage({ params }: PageProps<"/subscriptions/[id]">) {
   return (

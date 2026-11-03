@@ -44,7 +44,6 @@ Only the receipt text you paste leaves the browser, and it goes through the app'
 - **Detail and edit page**: change price, billing period, dates, notes, and reminder channel, or mark a subscription as cancelled. The next renewal date and trial status are recalculated.
 - **Cancel guides**: steps and a help link for 25 common services, matched by name.
 - **Reminders page**: the reminders due in the next 7 days, plus a "Test notification" button.
-- **Demo mode**: "Load demo data" and "Reset" in the footer, useful for recording a demo.
 - **Installable**: a web app manifest with SVG icons.
 - **Responsive and accessible**: works at 375px width, with visible focus rings, a skip link, labelled controls, and clear empty, loading, and error states.
 
@@ -66,7 +65,7 @@ cd unhook/web
 npm install
 ```
 
-Create `web/.env.local` with your Meta Model API key. The file is git-ignored, so never commit it.
+Create `web/.env.local` with your Meta Model API key (see `web/.env.example`). The file is git-ignored, so never commit it.
 
 ```
 MODEL_API_KEY=your-key-here
@@ -78,10 +77,33 @@ Then run the app:
 npm run dev     # http://localhost:3000
 npm run lint
 npm test
-npm run build   # needs MODEL_API_KEY too (see Limitations)
+npm run build
 ```
 
 Optional: `scripts/first-call.mjs` at the repo root was the first test call to the API. To run it, run `npm install` at the root, put `MODEL_API_KEY=` in a root `.env` file, and then run `node --env-file=.env scripts/first-call.mjs`.
+
+## Demo script (60 seconds)
+
+1. **Add** → paste the sample receipt below → **Extract details**.
+2. Point out the confidence badge and any highlighted "Check" fields, then
+   **Confirm and save**.
+3. Home — the new subscription in the list with cost totals.
+4. **Reminders** — upcoming trial ends and renewals for the next 7 days.
+5. Open the subscription → edit a field → **How to cancel** — guide steps
+   + official link.
+
+Sample receipt to paste:
+
+```text
+From: billing@streamnest.example
+Subject: Your StreamNest receipt
+
+Thanks for your payment!
+Plan: Basic
+Amount: $9.99
+Billing period: Monthly
+Charged on: October 5, 2026
+```
 
 ## How Meta's models are used
 
@@ -91,11 +113,12 @@ All model calls go through one server route, [`web/app/api/extract/route.ts`](we
 2. The route uses the OpenAI Node SDK with `baseURL: "https://api.meta.ai/v1"` and the key from `process.env.MODEL_API_KEY`. It calls the **Responses API** (`client.responses.create`) with model **`muse-spark-1.3`**.
 3. The instructions give today's date, ask for `YYYY-MM-DD` dates, ask the model to work out trial dates from today when only a length is given, ask for `null` when a value is unknown, and say never to guess a price.
 4. The response is constrained with **structured output**: `text.format` of type `json_schema`, with `strict: true` and a schema for `service`, `plan`, `price`, `currency`, `billing_period` (`weekly`, `monthly`, `yearly`, `one_time`, or `unknown`), `trial_end_date`, `first_charge_date`, and `notes`.
-5. The route parses `output_text` as JSON and returns it. If the call or the parsing fails, it logs the error on the server and returns `502` with `{ "error": "Extraction failed." }`.
+5. The route parses `output_text` as JSON. If the call or the parsing fails, it logs the error on the server and returns `502` with `{ "error": "Extraction failed." }`. If `MODEL_API_KEY` is missing, it returns `500` with a setup explanation instead.
+6. The extraction is checked twice before it reaches the user: deterministic code checks (service name and price appear in the text, valid dates, charge after trial end) plus a second strict model call that verifies each field against the source text. The route returns a `confidence` score (0 to 1) and an `issues` list alongside the fields.
+
+Calls are rate-limited in memory (10 requests per 10 minutes per IP in production).
 
 On the client, [`web/lib/extraction.ts`](web/lib/extraction.ts) checks the response shape. It also accepts the optional `confidence` (0 to 1) and `issues` (list of strings) fields and ignores them when they are malformed. Nothing is saved until the user reviews the form and confirms.
-
-[`web/lib/test-receipts.ts`](web/lib/test-receipts.ts) holds 20 made-up receipts with expected extractions for testing the route.
 
 ## What was built during the hackathon
 
@@ -107,6 +130,7 @@ Everything in this repository was created during the event. These entries come f
 - **Oct 30, 03:25**: `/api/extract` route using Muse Spark with structured output.
 - **Oct 30, 03:31 to 03:46**: subscription list and cost totals, detail and edit page, localStorage storage layer, `/add` page with receipt extraction and manual form, cancel guides and cancel page, reminder logic with tests, and 20 test receipts.
 - **Oct 31**: review step for low-confidence extractions, `/reminders` page with a test notification, demo mode controls, responsive and accessibility polish, web app manifest and icons, and this README.
+- **Nov 3**: pre-submission review fixes (missing-key error, date validation, crash guards), demo-mode removal, UI polish, and a demo script in this README.
 
 ## Built with Grok
 
@@ -125,5 +149,4 @@ Samuel wrote the original idea and plan, the first Muse Spark call, the Next.js 
 - **Notifications are a test only.** The "Test notification" button shows one notification through the browser Notification API. No reminders are scheduled or pushed, and the "Email" reminder channel is only stored, not sent.
 - **No service worker.** The app can be installed but doesn't work offline. Some mobile browsers only show notifications from a service worker, so the test button may not work there.
 - **SVG-only icons.** Some platforms, such as iOS home screen icons and some Android installs, need PNG icons, which aren't included yet.
-- **Build needs the key.** The extract route creates its API client when the module loads, so `npm run build` fails without `MODEL_API_KEY` set.
 - **AI extraction can be wrong.** That's why every extraction goes through a review step before saving.
