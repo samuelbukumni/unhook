@@ -24,8 +24,8 @@ export const metadata: Metadata = {
 // Browser UI color, matching the page background in light and dark mode.
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: light)", color: "#faf6ef" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a1929" },
   ],
 };
 
@@ -38,7 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <a
           href="#main"
-          className="sr-only rounded-lg bg-zinc-900 px-3 py-2 text-white focus:not-sr-only focus:absolute focus:left-2 focus:top-2 dark:bg-zinc-100 dark:text-zinc-900"
+          className="sr-only rounded-lg bg-navy-900 px-3 py-2 text-white focus:not-sr-only focus:absolute focus:left-2 focus:top-2 dark:bg-navy-50 dark:text-navy-900"
         >
           Skip to content
         </a>

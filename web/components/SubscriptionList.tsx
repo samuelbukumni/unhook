@@ -4,13 +4,15 @@
 // cost summary plus one row per subscription. Data lives in the browser, so
 // the server (and the first render) shows a loading line instead.
 
-import Link from "next/link";
 import { isTrialEndingSoon, sortByNextRenewal } from "@/lib/subscriptions";
-import { emptyStateClass, primaryButtonClass } from "@/lib/ui";
+import { ButtonLink } from "./ui/Button";
+import { EmptyState } from "./ui/EmptyState";
 import { useSubscriptions, useToday } from "@/lib/use-subscriptions";
+import { ActionRequired } from "./ActionRequired";
 import { CostSummary } from "./CostSummary";
 import { Loading } from "./Loading";
 import { SubscriptionRow } from "./SubscriptionRow";
+import { UpcomingRenewals } from "./UpcomingRenewals";
 
 export function SubscriptionList() {
   const subscriptions = useSubscriptions();
@@ -22,16 +24,17 @@ export function SubscriptionList() {
 
   if (subscriptions.length === 0) {
     return (
-      <div className={emptyStateClass}>
-        <p className="font-medium text-zinc-900 dark:text-zinc-100">No subscriptions yet</p>
-        <p className="text-sm">
-          Add your first one — paste a receipt and Unhook reads the details,
-          or enter them by hand.
-        </p>
-        <Link href="/add" className={`self-start text-sm ${primaryButtonClass}`}>
-          Add a subscription
-        </Link>
-      </div>
+      <EmptyState
+        title="No subscriptions yet"
+        action={
+          <ButtonLink href="/add" className="text-sm">
+            Add a subscription
+          </ButtonLink>
+        }
+      >
+        Add your first one — paste a receipt and Unhook reads the details,
+        or enter them by hand.
+      </EmptyState>
     );
   }
 
@@ -39,13 +42,16 @@ export function SubscriptionList() {
 
   return (
     <div className="flex flex-col gap-6">
+      <ActionRequired subscriptions={sorted} today={today} />
       <CostSummary subscriptions={sorted} />
+      <UpcomingRenewals subscriptions={sorted} today={today} />
       <ul aria-label="Subscriptions" className="flex flex-col gap-3">
         {sorted.map((sub) => (
           <SubscriptionRow
             key={sub.id}
             subscription={sub}
             endingSoon={isTrialEndingSoon(sub, today)}
+            today={today}
           />
         ))}
       </ul>

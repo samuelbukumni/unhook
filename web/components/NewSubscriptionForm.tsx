@@ -7,7 +7,9 @@
 import type { ReviewField } from "@/lib/review";
 import type { NewSubscriptionInput } from "@/lib/subscriptions";
 import type { BillingPeriod, ReminderChannel } from "@/lib/types";
-import { inputClass, primaryButtonClass } from "@/lib/ui";
+import { inputClass, selectClass } from "@/lib/ui";
+import { Button } from "./ui/Button";
+import { Field } from "./ui/Field";
 
 /** Starting values; empty strings mean "unknown, please fill in". */
 export type FormDefaults = {
@@ -22,7 +24,7 @@ export type FormDefaults = {
 };
 
 const flaggedInputClass =
-  "w-full rounded-lg border-2 border-amber-500 bg-amber-50 px-3 py-2 dark:bg-amber-950/40";
+  "w-full min-h-10 rounded-lg border-2 border-amber-500 bg-amber-50 px-3 py-2 text-navy-900 dark:bg-amber-950/40 dark:text-navy-50";
 
 const NO_FIELDS: ReadonlySet<ReviewField> = new Set();
 
@@ -52,75 +54,43 @@ export function NewSubscriptionForm({
     });
   }
 
-  /** Label text plus a "Check" tag, and the input class, for one field. */
-  function field(name: ReviewField, label: string) {
-    const isFlagged = flagged.has(name);
-    return {
-      label: (
-        <span className="flex items-center gap-2">
-          {label}
-          {isFlagged && (
-            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
-              Check
-            </span>
-          )}
-        </span>
-      ),
-      className: isFlagged ? flaggedInputClass : inputClass,
-    };
-  }
-
-  const service = field("service", "Service");
-  const plan = field("plan", "Plan (optional)");
-  const price = field("price", "Price");
-  const currency = field("currency", "Currency (e.g. USD, NGN)");
-  const period = field("billing_period", "Billing period");
-  const firstCharge = field("first_charge_date", "First charge");
-  const trialEnd = field("trial_end_date", "Trial ends (optional)");
-  const notes = field("notes", "Notes");
+  const inputFor = (name: ReviewField) => (flagged.has(name) ? flaggedInputClass : inputClass);
+  const selectFor = (name: ReviewField) => (flagged.has(name) ? flaggedInputClass : selectClass);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
-          {service.label}
-          <input name="service" required defaultValue={defaults.service} className={service.className} />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          {plan.label}
-          <input name="plan" defaultValue={defaults.plan} className={plan.className} />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          {price.label}
-          <input name="price" type="number" min="0" step="0.01" required defaultValue={defaults.price} className={price.className} />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          {currency.label}
-          <input name="currency" required pattern="[A-Za-z]{3}" maxLength={3} defaultValue={defaults.currency} className={currency.className} />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          {period.label}
-          <select name="billing_period" required defaultValue={defaults.billing_period} className={period.className}>
+        <Field label="Service" check={flagged.has("service")}>
+          <input name="service" required defaultValue={defaults.service} className={inputFor("service")} />
+        </Field>
+        <Field label="Plan (optional)" check={flagged.has("plan")}>
+          <input name="plan" defaultValue={defaults.plan} className={inputFor("plan")} />
+        </Field>
+        <Field label="Price" check={flagged.has("price")}>
+          <input name="price" type="number" min="0" step="0.01" required defaultValue={defaults.price} className={inputFor("price")} />
+        </Field>
+        <Field label="Currency (e.g. USD, NGN)" check={flagged.has("currency")}>
+          <input name="currency" required pattern="[A-Za-z]{3}" maxLength={3} defaultValue={defaults.currency} className={inputFor("currency")} />
+        </Field>
+        <Field label="Billing period" check={flagged.has("billing_period")}>
+          <select name="billing_period" required defaultValue={defaults.billing_period} className={selectFor("billing_period")}>
             <option value="" disabled>Choose…</option>
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
             <option value="yearly">Yearly</option>
           </select>
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          {firstCharge.label}
-          <input name="first_charge_date" type="date" required defaultValue={defaults.first_charge_date} className={firstCharge.className} />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          {trialEnd.label}
-          <input name="trial_end_date" type="date" defaultValue={defaults.trial_end_date} className={trialEnd.className} />
-        </label>
+        </Field>
+        <Field label="First charge" check={flagged.has("first_charge_date")}>
+          <input name="first_charge_date" type="date" required defaultValue={defaults.first_charge_date} className={inputFor("first_charge_date")} />
+        </Field>
+        <Field label="Trial ends (optional)" check={flagged.has("trial_end_date")}>
+          <input name="trial_end_date" type="date" defaultValue={defaults.trial_end_date} className={inputFor("trial_end_date")} />
+        </Field>
       </div>
-      <label className="flex flex-col gap-1 text-sm">
-        {notes.label}
-        <textarea name="notes" rows={2} defaultValue={defaults.notes} className={notes.className} />
-      </label>
-      <fieldset className="flex gap-4 text-sm">
+      <Field label="Notes" check={flagged.has("notes")}>
+        <textarea name="notes" rows={2} defaultValue={defaults.notes} className={inputFor("notes")} />
+      </Field>
+      <fieldset className="flex gap-4 text-sm text-navy-800 dark:text-navy-100">
         <legend className="mb-1">Remind me by</legend>
         <label className="flex items-center gap-2">
           <input type="radio" name="reminder_channel" value="push" defaultChecked />
@@ -131,9 +101,9 @@ export function NewSubscriptionForm({
           Email
         </label>
       </fieldset>
-      <button type="submit" className={`self-start ${primaryButtonClass}`}>
+      <Button type="submit" className="self-start">
         Confirm and save
-      </button>
+      </Button>
     </form>
   );
 }

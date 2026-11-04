@@ -5,7 +5,9 @@
 
 import Link from "next/link";
 import { findCancelGuide } from "@/lib/cancel-guides";
-import { emptyStateClass, h1Class, mutedClass, primaryButtonClass } from "@/lib/ui";
+import { emptyStateClass, h1Class, linkClass, mutedClass } from "@/lib/ui";
+import { ButtonLink } from "./ui/Button";
+import { EmptyState } from "./ui/EmptyState";
 import { useSubscriptions } from "@/lib/use-subscriptions";
 import { Loading } from "./Loading";
 
@@ -39,16 +41,16 @@ export function CancelGuideView({ id }: { id: string }) {
             ))}
           </ol>
           {guide.cancel_url ? (
-            <a
+            <ButtonLink
               href={guide.cancel_url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`self-start ${primaryButtonClass}`}
+              className="self-start text-sm"
             >
               Open {guide.name}&apos;s official cancel help
               <span aria-hidden="true">&nbsp;↗</span>
               <span className="sr-only"> (opens in a new tab)</span>
-            </a>
+            </ButtonLink>
           ) : (
             <p className={`text-sm ${mutedClass}`}>We don&apos;t have a confirmed official link for this one yet.</p>
           )}
@@ -60,19 +62,20 @@ export function CancelGuideView({ id }: { id: string }) {
           )}
         </>
       ) : (
-        <div className={emptyStateClass}>
-          <p className="font-medium text-zinc-900 dark:text-zinc-100">No cancel guide for {sub.service} yet.</p>
-          <p className="text-sm">
-            Try the account or billing settings on the service&apos;s website. If you subscribed through
-            Apple or Google Play, cancel in that store&apos;s subscription settings.
-          </p>
-          {sub.cancel_url && (
-            <a href={sub.cancel_url} target="_blank" rel="noopener noreferrer" className="self-start text-sm underline">
-              Saved cancel link<span aria-hidden="true"> ↗</span>
-              <span className="sr-only"> (opens in a new tab)</span>
-            </a>
-          )}
-        </div>
+        <EmptyState
+          title={`No cancel guide for ${sub.service} yet.`}
+          action={
+            sub.cancel_url ? (
+              <a href={sub.cancel_url} target="_blank" rel="noopener noreferrer" className={`text-sm underline ${linkClass}`}>
+                Saved cancel link<span aria-hidden="true"> ↗</span>
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            ) : undefined
+          }
+        >
+          Try the account or billing settings on the service&apos;s website. If you subscribed through
+          Apple or Google Play, cancel in that store&apos;s subscription settings.
+        </EmptyState>
       )}
     </div>
   );

@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
+/* Unhook palette: warm cream ground, deep navy ink, teal primary actions,
+   forest green for positive states, restrained red for destructive actions. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --focus: #047857;
+  --background: #faf6ef;
+  --foreground: #243b53;
+  --focus: #0f766e;
 }
 
 @theme inline {
@@ -13,11 +15,25 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --color-cream: #faf6ef;
+  --color-paper: #fffdf8;
+  --color-line: #e6ddcb;
+  --color-navy-50: #f0f4f8;
+  --color-navy-100: #d9e2ec;
+  --color-navy-200: #bcccdc;
+  --color-navy-600: #486581;
+  --color-navy-700: #334e68;
+  --color-navy-800: #243b53;
+  --color-navy-900: #102a43;
+  --color-navy-950: #0a1929;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --focus: #34d399;
+    --background: #0a1929;
+    --foreground: #e6eef6;
+    --focus: #2dd4bf;
   }
 }
 
@@ -28,14 +44,14 @@ body {
 }
 
 ::selection {
-  background: #a7f3d0;
-  color: #022c22;
+  background: #99f6e4;
+  color: #042f2e;
 }
 
 @media (prefers-color-scheme: dark) {
   ::selection {
-    background: #065f46;
-    color: #ecfdf5;
+    background: #134e4a;
+    color: #ccfbf1;
   }
 }
 

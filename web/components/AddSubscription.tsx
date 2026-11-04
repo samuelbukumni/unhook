@@ -11,9 +11,10 @@ import { extractFromText, MAX_RECEIPT_LENGTH, type ExtractResult } from "@/lib/e
 import { fieldsInIssues } from "@/lib/review";
 import { saveSubscription } from "@/lib/storage";
 import { createSubscription, type NewSubscriptionInput } from "@/lib/subscriptions";
-import { alertClass, h2Class, inputClass, mutedClass, primaryButtonClass } from "@/lib/ui";
+import { alertClass, h2Class, inputClass, mutedClass } from "@/lib/ui";
 import { NewSubscriptionForm, type FormDefaults } from "./NewSubscriptionForm";
 import { ReviewBanner } from "./ReviewBanner";
+import { Button } from "./ui/Button";
 
 const EMPTY: FormDefaults = {
   service: "",
@@ -110,15 +111,9 @@ export function AddSubscription() {
           className={inputClass}
         />
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handleExtract}
-            disabled={loading || !receiptText.trim()}
-            aria-busy={loading}
-            className={primaryButtonClass}
-          >
+          <Button onClick={handleExtract} disabled={loading || !receiptText.trim()} aria-busy={loading}>
             {loading ? "Reading receipt…" : "Extract details"}
-          </button>
+          </Button>
           <span className={`text-xs ${mutedClass}`} aria-label={`${receiptText.length} of ${MAX_RECEIPT_LENGTH} characters`}>
             {receiptText.length}/{MAX_RECEIPT_LENGTH}
           </span>

@@ -6,7 +6,7 @@
 // This is only a test; Unhook doesn't schedule real push reminders yet.
 
 import { useState } from "react";
-import { primaryButtonClass } from "@/lib/ui";
+import { Button } from "./ui/Button";
 
 type Result =
   | { kind: "idle" }
@@ -64,16 +64,11 @@ export function NotificationTest({ body }: { body: string }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <button
-        type="button"
-        onClick={handleClick}
-        disabled={result.kind === "working"}
-        className={`self-start ${primaryButtonClass}`}
-      >
+      <Button onClick={handleClick} disabled={result.kind === "working"} className="self-start">
         {result.kind === "working" ? "Waiting for permission…" : "Test notification"}
-      </button>
+      </Button>
       <p aria-live="polite" className="text-sm">
-        {result.kind === "sent" && <span className="text-green-700 dark:text-green-400">Test notification sent.</span>}
+        {result.kind === "sent" && <span className="text-emerald-700 dark:text-emerald-400">Test notification sent.</span>}
         {result.kind === "problem" && <span className="text-red-700 dark:text-red-400">{result.message}</span>}
       </p>
     </div>
